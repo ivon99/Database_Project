@@ -5,6 +5,9 @@
 #include <fstream>
 using namespace std;
 
+
+//TODO: compare for double (aggregate for double)
+
 //==HELPER FUNCTIONS==
 /*
 void Table::createColByType(const char* type, const char* colename)
@@ -83,9 +86,43 @@ void Table::print() const
 {
   ;
 } */
-void Table::count() const
+int Table::count(int col_index, int value) const
 {
-  ;
+  int col_size= m_table.getElement(col_index)->getSize();
+  int ctr=0;
+  for(int i=0;i<col_size; i++)
+  {
+    if(m_table.getElement(col_index)->getIntElement(i)==value) 
+     ctr++;
+  }
+   cout<<"Ctr is "<<ctr<<endl;
+  return ctr;
+}
+
+int Table::count(int col_index, double value) const
+{
+  int col_size= m_table.getElement(col_index)->getSize();
+  int ctr=0;
+  for(int i=0; i<col_size; i++)
+  {
+    if(m_table.getElement(col_index)->getDoubleElement(i)==value) 
+     ctr++;
+  }
+  cout<<"Ctr is "<<ctr<<endl;
+   return ctr;
+}
+
+int Table::count(int col_index, const char* value) const
+{
+  int col_size= m_table.getElement(col_index)->getSize();
+  int ctr=0;
+  for(int i=0; i<col_size; i++)
+  {
+    if(strcmp(m_table.getElement(col_index)->getStringElement(i),value)==0) 
+     ctr++;
+  }
+   cout<<"Ctr is "<<ctr<<endl;
+  return ctr;
 }
 
 //===TABLE METHODS===
@@ -319,6 +356,7 @@ void Table::deleteRows(int col_index, double value)
     }
   }
 }
+
 void Table::deleteRows(int col_index, String value)
 {
   int num_col = m_table.getSize();
@@ -336,20 +374,53 @@ void Table::deleteRows(int col_index, String value)
   }
 }
 
+void Table::aggregate(int col_index, int value, int target_col_index, const char* operation)
+{
+   int size_col = m_table.getElement(col_index)->getSize();
+   for(int i=0; i<size_col;i++)
+   {
+     if(m_table.getElement(col_index)->getIntElement(i)==value)
+     {
+       if(strcmp(operation,"sum")==0)
+       {
+         int sum = m_table.getElement(col_index)->getIntElement(i) +  m_table.getElement(target_col_index)->getIntElement(i);
+         cout<<"!!Sum is "<<sum<<endl;
+          m_table.getElement(target_col_index)->updateElement(i,sum); 
+          cout<<m_table.getElement(target_col_index)->getIntElement(i);
+          continue;
+       }
+       if(strcmp(operation,"product")==0)
+       {
+         int product = m_table.getElement(col_index)->getIntElement(i) *  m_table.getElement(target_col_index)->getIntElement(i);
+          cout<<"!!Product is "<<product<<endl;
+          m_table.getElement(target_col_index)->updateElement(i,product);
+          continue;
+       }
+       if(strcmp(operation, "maximum")==0)
+       {
+         cout<<"Inside maximum"<<endl;
+         if(m_table.getElement(target_col_index)->getIntElement(i) < m_table.getElement(col_index)->getIntElement(i))
+          m_table.getElement(target_col_index)->updateElement(i,m_table.getElement(col_index)->getIntElement(i));
+         continue; 
+       }  
+       if(strcmp(operation,"minimum")==0)
+       {
+         cout<<"Inside minimum"<<endl;
+        if(m_table.getElement(target_col_index)->getIntElement(i) >  m_table.getElement(col_index)->getIntElement(i))
+          m_table.getElement(target_col_index)->updateElement(i,m_table.getElement(col_index)->getIntElement(i));
+         continue; 
+       }
+     }
+   }
+}
+
+
 /*
-  
-  void Table::deleteRows()
-  {
-    ;
-  }
   void innerJoin()
   {
      ;
   }
-  void aggregate()
-  {
-    ;
-  } */
+   */
 
 void Table::rename(const char *new_name)
 {

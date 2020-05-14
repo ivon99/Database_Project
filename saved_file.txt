@@ -1,0 +1,11 @@
+7 Тable2
+5 4
+8 FirstCol int
+9 SecondCol double
+8 ThirdCol string
+7 LastCol int
+5 -2.312 text1 5 
+-123 0 text2 3213 
+5 23 text78 -25 
+0 23.4 text3 33242 
+0 3.23131e+06 text4 7818 

@@ -27,7 +27,10 @@ class Table
     void describe()const;
     const char* getName() const;
     void print() const; //TODO: dialogue <iomanip>
-    void count() const;  //TODO:
+
+    int count(int col_index, int value) const;
+    int count(int col_index, double value) const;
+    int count(int col_index, const char* value) const;
 
     //--table methods 
     bool addColumn(const char* colname, const char* type);
@@ -48,6 +51,9 @@ class Table
     void deleteRows(int col_index, int value);
     void deleteRows(int col_index, double value);
     void deleteRows(int col_index, String value);
+
+    void aggregate(int col_index, int value, int target_col_index, const char* operation);
+
 
     void innerJoin();   //TODO:
     void aggregate();   //TODO:
