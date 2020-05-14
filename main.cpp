@@ -110,6 +110,7 @@ int main(){
     tablename.describe(); */
     Table test = open("sample_input_update.txt");
     test.updateRows(0,0,3,5);
+    test.deleteRows(0,0);
    saveas("saved_file.txt",test);
     
    /* ==Test for String class==

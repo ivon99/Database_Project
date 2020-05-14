@@ -61,3 +61,8 @@ void DoubleColumn::updateElement(int index, double value)
 {
    m_doublecolumn[index]=value;
 }
+
+void DoubleColumn::deleteElement(int index) 
+{
+  m_doublecolumn.deleteElement(index);
+}

@@ -45,7 +45,10 @@ class Table
     void updateRows(int search_col_index,double search_value,int target_col_index,double target_value);
     void updateRows(int search_col_index,String search_value,int target_col_index,const char* target_value);
 
-    void deleteRows();  //TODO:
+    void deleteRows(int col_index, int value);
+    void deleteRows(int col_index, double value);
+    void deleteRows(int col_index, String value);
+
     void innerJoin();   //TODO:
     void aggregate();   //TODO:
     void rename(const char* new_name);

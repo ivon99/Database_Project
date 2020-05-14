@@ -59,6 +59,9 @@ class IntColumn : public IColumn
        index--; value="NULL";
        return ;
    }
+
+
+   virtual void deleteElement(int index) override;
    void printColumn(); //FIXME: only for now, later to be properly displayed
 };
 

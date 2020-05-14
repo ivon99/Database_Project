@@ -3,43 +3,45 @@
 #include <cstring>
 using namespace std;
 
- void StringColumn::copyFrom(const StringColumn& other)
- { 
-    m_colname=new char[strlen(other.m_colname)+1];
-   strcpy(m_colname, other.m_colname);
-   m_stringcolumn=other.m_stringcolumn;
- }
-
-StringColumn::StringColumn(const char* colname)
+void StringColumn::copyFrom(const StringColumn &other)
 {
-   m_colname= new char[strlen(colname)+1];
-   strcpy(m_colname, colname);
-   List<int>();
-   cout<<"StringColumn constructor called"<<endl;
+    m_colname = new char[strlen(other.m_colname) + 1];
+    strcpy(m_colname, other.m_colname);
+    m_stringcolumn = other.m_stringcolumn;
 }
 
-StringColumn::StringColumn(const StringColumn& other)
+StringColumn::StringColumn(const char *colname)
 {
-   copyFrom(other);
-   cout<<"StringColumn copy constructor called"<<endl;
+    m_colname = new char[strlen(colname) + 1];
+    strcpy(m_colname, colname);
+    List<int>();
+    cout << "StringColumn constructor called" << endl;
 }
 
-StringColumn& StringColumn::operator=(const StringColumn& other)
+StringColumn::StringColumn(const StringColumn &other)
 {
-    if(this!=&other){
+    copyFrom(other);
+    cout << "StringColumn copy constructor called" << endl;
+}
+
+StringColumn &StringColumn::operator=(const StringColumn &other)
+{
+    if (this != &other)
+    {
         delete[] m_colname;
         copyFrom(other);
     }
-    cout<<"StringColumn operator== called"<<endl;
+    cout << "StringColumn operator== called" << endl;
     return *this;
 }
 
-const char* StringColumn::getNameColumn()
+const char *StringColumn::getNameColumn()
 {
-   return m_colname;
+    return m_colname;
 }
 
-const char* StringColumn::getType(){
+const char *StringColumn::getType()
+{
     return "string";
 }
 
@@ -50,14 +52,19 @@ void StringColumn::addElement(String value)
 
 void StringColumn::updateElement(int index, String value)
 {
-    m_stringcolumn[index]=value;
+    m_stringcolumn[index] = value;
+}
+
+void StringColumn::deleteElement(int index)
+{
+    m_stringcolumn.deleteElement(index);
 }
 
 void StringColumn::printColumn()
 {
-   int size= m_stringcolumn.getSize();
-   for(int i=0; i<size; i++)
-   {
-       cout<<m_stringcolumn[i]<<'\n'; 
-   }
+    int size = m_stringcolumn.getSize();
+    for (int i = 0; i < size; i++)
+    {
+        cout << m_stringcolumn[i] << '\n';
+    }
 }

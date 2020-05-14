@@ -53,6 +53,11 @@ void IntColumn::updateElement(int index,int value)
     m_intcolumn[index]=value;
 }
 
+void IntColumn::deleteElement(int index)
+{
+    m_intcolumn.deleteElement(index);
+}
+
 void IntColumn::printColumn()
 {
    int size= m_intcolumn.getSize();

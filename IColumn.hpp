@@ -22,6 +22,8 @@ class IColumn
    virtual void updateElement(int index,double value)=0;
    virtual void updateElement(int index,String value)=0;
 
+   virtual void deleteElement(int index)=0;
+
    virtual ~IColumn()
    {
       std::cout<<"IColumn destructor called"<< std::endl;
