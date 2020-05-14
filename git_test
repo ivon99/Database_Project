@@ -1,1 +1,14 @@
-test_git
+#include <iostream>
+using namespace std;
+
+//! function that sums two integers
+void plus(int a,int b){
+ cout<<"Result is "<<a+b;
+}
+
+int main(){
+ int a=5, b=8;
+ plus(a,b);
+
+ return 0;
+}
