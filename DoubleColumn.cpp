@@ -56,3 +56,8 @@ void DoubleColumn::printColumn()
        cout<<m_doublecolumn[i]<<'\n';
    }
 }
+
+void DoubleColumn::updateElement(int index, double value)
+{
+   m_doublecolumn[index]=value;
+}

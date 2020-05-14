@@ -49,6 +49,18 @@ class DoubleColumn : public IColumn
    {
        value= "NULL";
    }
+
+   virtual void updateElement(int index,int value) override
+    {
+      index -- ; value--;
+      return ;
+    }
+   virtual void updateElement(int index,double value) override;
+   virtual void updateElement(int index,String value) override
+   {
+       index--; value="NULL";
+       return ;
+   }
    void printColumn(); //FIXME: only for now, later to be properly displayed
 };
 

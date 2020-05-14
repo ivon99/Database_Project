@@ -57,9 +57,6 @@ class Table
     void writeTableToFile(std::ofstream& outfile, Table& obj); //TODO: 
     Table& readTableFromFile(std::ifstream& infile, Table& obj);  //TODO:
 
- #include "Table.tmpl"
-
-
 
 
 #endif

@@ -48,6 +48,11 @@ void IntColumn::addElement(int value)
     m_intcolumn.addElement(value);
 }
 
+void IntColumn::updateElement(int index,int value) 
+{
+    m_intcolumn[index]=value;
+}
+
 void IntColumn::printColumn()
 {
    int size= m_intcolumn.getSize();

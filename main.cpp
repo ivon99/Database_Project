@@ -108,9 +108,8 @@ int main(){
     tablename.addColumn("[kitty-katty]","int");
     tablename.addColumn("[babes]","double");
     tablename.describe(); */
-    Table test = open("sample_input_string.txt");
-    //test.updateRows(0,0,1,5);
-    test.describe();
+    Table test = open("sample_input_update.txt");
+    test.updateRows(0,0,3,5);
    saveas("saved_file.txt",test);
     
    /* ==Test for String class==

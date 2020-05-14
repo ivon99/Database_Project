@@ -245,7 +245,7 @@ int size_col= m_table.getElement(col_index)->getSize();
      }
    }
 }
-/*
+
  void Table::updateRows(int search_col_index,int search_value,int target_col_index,int target_value)
  {
      int size_search_col= m_table.getElement(search_col_index)->getSize();
@@ -253,7 +253,7 @@ int size_col= m_table.getElement(col_index)->getSize();
      {
        if(m_table.getElement(search_col_index)->getIntElement(i)==search_value)
        {
-         m_table.getElement(target_col_index)->addElement(i,target_value);
+         m_table.getElement(target_col_index)->updateElement(i,target_value);
        }
      }
  }
@@ -265,7 +265,7 @@ int size_col= m_table.getElement(col_index)->getSize();
      {
        if(m_table.getElement(search_col_index)->getDoubleElement(i)==search_value)
        {
-         m_table.getElement(target_col_index)->addElement(i,target_value);
+         m_table.getElement(target_col_index)->updateElement(i,target_value);
        }
      }
  }
@@ -278,11 +278,11 @@ int size_col= m_table.getElement(col_index)->getSize();
        if(strcmp(m_table.getElement(search_col_index)->getStringElement(i),search_value.convertToChar())==0)   //TOO: strcmp
        {
          String value_str(target_value);
-         m_table.getElement(target_col_index)->addElement(i,value_str);
+         m_table.getElement(target_col_index)->updateElement(i,value_str);
        }
      }
  }
-*/
+
   /*
   void Table::updateRows()
   {

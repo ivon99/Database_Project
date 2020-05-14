@@ -48,6 +48,11 @@ void StringColumn::addElement(String value)
     m_stringcolumn.addElement(value);
 }
 
+void StringColumn::updateElement(int index, String value)
+{
+    m_stringcolumn[index]=value;
+}
+
 void StringColumn::printColumn()
 {
    int size= m_stringcolumn.getSize();

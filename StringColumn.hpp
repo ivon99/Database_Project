@@ -52,6 +52,19 @@ class StringColumn : public IColumn
      return ;
      }
    virtual void addElement(String value) override;
+
+    virtual void updateElement(int index,int value) override
+    {
+      index -- ; value--;
+      return ;
+    }
+   virtual void updateElement(int index,double value) override
+   {
+        index--; value--;
+        return ;
+   }
+   virtual void updateElement(int index,String value) override;
+
    void printColumn(); //FIXME: only for now, later to be properly displayed
 };
 

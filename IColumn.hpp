@@ -9,12 +9,19 @@ class IColumn
    virtual const char* getType() =0;
    virtual const char* getNameColumn() =0;
    virtual int getSize()=0;
+
    virtual int getIntElement(int index)=0;
    virtual double getDoubleElement(int index)=0;
    virtual const char* getStringElement(int index)=0;
+
    virtual void addElement(int value)=0;
    virtual void addElement(double value)=0;
    virtual void addElement(String value)=0;
+
+   virtual void updateElement(int index,int value)=0;
+   virtual void updateElement(int index,double value)=0;
+   virtual void updateElement(int index,String value)=0;
+
    virtual ~IColumn()
    {
       std::cout<<"IColumn destructor called"<< std::endl;
