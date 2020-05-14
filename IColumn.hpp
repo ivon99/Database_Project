@@ -16,11 +16,11 @@ class IColumn
 
    virtual void addElement(int value)=0;
    virtual void addElement(double value)=0;
-   virtual void addElement(String value)=0;
+   virtual void addElement(String* value)=0;
 
    virtual void updateElement(int index,int value)=0;
    virtual void updateElement(int index,double value)=0;
-   virtual void updateElement(int index,String value)=0;
+   virtual void updateElement(int index,String* value)=0;
 
    virtual void deleteElement(int index)=0;
 

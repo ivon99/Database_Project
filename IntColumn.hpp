@@ -33,9 +33,9 @@ class IntColumn : public IColumn
      value++; 
      return ;
      }
-   virtual void addElement(String value) override 
+   virtual void addElement(String* value) override 
    {
-    value="NULL";  
+    value=nullptr;  value++;
     return;
    }
    virtual int getIntElement(int index)override { return m_intcolumn[index]; }
@@ -54,9 +54,9 @@ class IntColumn : public IColumn
         index--; value--;
         return ;
    }
-   virtual void updateElement(int index,String value) override
+   virtual void updateElement(int index,String* value) override
    {
-       index--; value="NULL";
+       index--; value=nullptr; value++;
        return ;
    }
 

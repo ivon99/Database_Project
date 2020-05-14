@@ -6,7 +6,7 @@
 
 class StringColumn : public IColumn
 {
-  List<String> m_stringcolumn;
+  List<String*> m_stringcolumn;
   char *m_colname;
 
   void copyFrom(const StringColumn &);
@@ -40,7 +40,7 @@ public:
   }
   virtual const char *getStringElement(int index) override
   {
-    return m_stringcolumn[index].convertToChar();
+    return m_stringcolumn[index]->convertToChar();
   }
   virtual void addElement(int value) override
   {
@@ -52,7 +52,7 @@ public:
     value++;
     return;
   }
-  virtual void addElement(String value) override;
+  virtual void addElement(String* value) override;
 
   virtual void updateElement(int index, int value) override
   {
@@ -66,7 +66,7 @@ public:
     value--;
     return;
   }
-  virtual void updateElement(int index, String value) override;
+  virtual void updateElement(int index, String* value) override;
 
   virtual void deleteElement(int index) override;
 

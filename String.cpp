@@ -23,7 +23,7 @@ using namespace std;
          m_text[i]=text[i];
         }
         cout<<"I've copied it!"<<endl;
-        formatToString();
+        //formatToString();
         cout<<"size now is "<<m_size;
      }
      else 
@@ -121,11 +121,15 @@ String::String(const String& other)
 
 String& String::operator=(const String& other)
 {
+    cout<<"String operator= inside"<<endl;
   if(this!=&other)
   {
+      cout<<"This is different from other"<<endl;
     delete[] m_text;
+    cout<<"Ive deleted the pointer or sth"<<endl;
     copyFrom(other);
   }
+  cout<<"String operator= called"<<endl;
   return *this;
 }
 

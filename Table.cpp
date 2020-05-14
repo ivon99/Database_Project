@@ -168,9 +168,9 @@ void Table::insertDoubleValue(double value, int col_index)
   m_table[col_index]->addElement(value);
 }
 
-void Table::insertStringValue(String value, int col_index)
+void Table::insertStringValue(String* value, int col_index) 
 {
-
+  cout<<"Im inside insert string value with value"<<*value<<endl;
   m_table[col_index]->addElement(value);
 }
 
@@ -189,7 +189,7 @@ void Table::insertRow(int col_index)
   }
   if (strcmp(type, "string") == 0)
   {
-    insertStringValue("NULL", col_index);
+    insertStringValue(nullptr, col_index);
   }
 }
 
@@ -314,7 +314,7 @@ void Table::updateRows(int search_col_index, String search_value, int target_col
   {
     if (strcmp(m_table.getElement(search_col_index)->getStringElement(i), search_value.convertToChar()) == 0) //TOO: strcmp
     {
-      String value_str(target_value);
+      String* value_str = new String(target_value);
       m_table.getElement(target_col_index)->updateElement(i, value_str);
     }
   }
@@ -414,13 +414,21 @@ void Table::aggregate(int col_index, int value, int target_col_index, const char
    }
 }
 
+ Table& Table::innerJoin(int first_col_index, Table& other,int other_col_index )
+{
+  Table* new_table = new Table();
+  const char * name_col1 = m_table.getElement(first_col_index)->getNameColumn();
+  const char* type_col1=  m_table.getElement(first_col_index)->getType();
+  new_table->addColumn(name_col1,type_col1);
+  new_table->m_table[new_table->m_table.getSize()]= m_table[first_col_index];
 
-/*
-  void innerJoin()
-  {
-     ;
-  }
-   */
+  const char * name_other_col = m_table.getElement(first_col_index)->getNameColumn();
+  const char* type_other_col=  m_table.getElement(first_col_index)->getType();
+  new_table->addColumn(name_other_col,type_other_col);
+  new_table->m_table[new_table->m_table.getSize()] = other.m_table[other_col_index];
+  
+  return *new_table;
+}
 
 void Table::rename(const char *new_name)
 {
@@ -428,12 +436,6 @@ void Table::rename(const char *new_name)
   m_tablename = new char[strlen(new_name) + 1];
   stpcpy(m_tablename, new_name);
 }
-
-/*
-  void Table:: exportTable(std::ofstream outfile)
-  { 
-     return ;
-  } */
 
 Table &readTableFromFile(std::ifstream &infile, Table &obj)
 {
@@ -484,6 +486,7 @@ Table &readTableFromFile(std::ifstream &infile, Table &obj)
         infile >> value;
         std::cout << "[" << i << "][" << j << "] put int value" << value << endl;
         obj.insertIntValue(value, j);
+        continue;
       }
       if (strcmp(type, "double") == 0)
       {
@@ -491,18 +494,21 @@ Table &readTableFromFile(std::ifstream &infile, Table &obj)
         infile >> value;
         std::cout << "[" << i << "][" << j << "] put double value" << value << endl;
         obj.insertDoubleValue(value, j);
+        continue;
       }
       if (strcmp(type, "string") == 0)
       {
-        char *text = new char[100];
+        char* text = new char[100];
         infile >> text;
         std::cout << "[" << i << "][" << j << "] put string text " << text << endl;
         String *str_ptr = new String(text);
-        std::cout << *str_ptr;
+        std::cout << "string now is" <<*str_ptr<<endl;
         // const char* value_in= str_ptr->convertToChar();
         //cout<<value_in;
-        obj.insertStringValue(*str_ptr, j);
+        cout<<"Im about to insert string for column"<<j<<endl;
+        obj.insertStringValue(str_ptr, j);  //FIXME: Maybe insert string should get String&, because othrwise copy constructor
         std::cout << "im here!" << endl;
+        continue;
       }
     }
   }

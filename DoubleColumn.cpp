@@ -14,7 +14,7 @@ DoubleColumn::DoubleColumn(const char* colname)
 {
    m_colname= new char[strlen(colname)+1];
    strcpy(m_colname, colname);
-   List<int>();
+   List<double>();
    cout<<"DoubleColumn constructor called"<<endl;
 }
 

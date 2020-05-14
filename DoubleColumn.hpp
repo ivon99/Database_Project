@@ -45,9 +45,9 @@ class DoubleColumn : public IColumn
      return ;
      }
    virtual void addElement(double value)override;
-   virtual void addElement(String value) override 
+   virtual void addElement(String* value) override 
    {
-       value= "NULL";
+       value=nullptr; value++;
    }
 
    virtual void updateElement(int index,int value) override
@@ -56,9 +56,9 @@ class DoubleColumn : public IColumn
       return ;
     }
    virtual void updateElement(int index,double value) override;
-   virtual void updateElement(int index,String value) override
+   virtual void updateElement(int index,String* value) override
    {
-       index--; value="NULL";
+       index--; value=nullptr; value++;
        return ;
    }
    
@@ -66,10 +66,5 @@ class DoubleColumn : public IColumn
 
    void printColumn(); //FIXME: only for now, later to be properly displayed
 };
-
-/*
-DoubleColumn::~DoubleColumn(){
-    std::cout<<"double column destructor called"<<std::endl;
-} */
 
 #endif

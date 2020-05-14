@@ -38,7 +38,8 @@ class Table
 
     void insertIntValue(int value, int col_index);
     void insertDoubleValue(double value, int col_index);
-    void insertStringValue(String value, int col_index);
+    void insertStringValue(String* value, int col_index);
+
    
     void select(int col_index, int value);
     void select(int col_index, double value);
@@ -55,8 +56,8 @@ class Table
     void aggregate(int col_index, int value, int target_col_index, const char* operation);
 
 
-    void innerJoin();   //TODO:
-    void aggregate();   //TODO:
+    Table& innerJoin(int first_col_index, Table& other,int other_col_index );
+
     void rename(const char* new_name);
     friend void writeTableToFile(std::ofstream& outfile, Table& obj); 
     friend Table& readTableFromFile(std::ifstream& infile, Table& obj);

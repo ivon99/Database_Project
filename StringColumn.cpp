@@ -10,11 +10,12 @@ void StringColumn::copyFrom(const StringColumn &other)
     m_stringcolumn = other.m_stringcolumn;
 }
 
+//==THE BIG 4==
 StringColumn::StringColumn(const char *colname)
 {
     m_colname = new char[strlen(colname) + 1];
     strcpy(m_colname, colname);
-    List<int>();
+    List<String*>();
     cout << "StringColumn constructor called" << endl;
 }
 
@@ -35,6 +36,7 @@ StringColumn &StringColumn::operator=(const StringColumn &other)
     return *this;
 }
 
+// ==getters==
 const char *StringColumn::getNameColumn()
 {
     return m_colname;
@@ -45,12 +47,14 @@ const char *StringColumn::getType()
     return "string";
 }
 
-void StringColumn::addElement(String value)
+void StringColumn::addElement(String* value)
 {
+    cout<<"Im inside add element string"<<endl;
     m_stringcolumn.addElement(value);
+    cout<<"Ive added element to string column and now it has size "<<m_stringcolumn.getSize()<<endl;
 }
 
-void StringColumn::updateElement(int index, String value)
+void StringColumn::updateElement(int index, String* value)
 {
     m_stringcolumn[index] = value;
 }

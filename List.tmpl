@@ -98,12 +98,17 @@ template<typename T>
   template<typename T>
   void List<T>::addElement(const T& newElement)
   {
+    std::cout<<"Im inside add element for list"<<std::endl;
      if(m_size==m_capacity)
      {
        resize(m_capacity*2);
+       std::cout<<"Im gonna resize and now list has capacity of"<<m_capacity<<std::endl;
      }
-    m_array[m_size] = newElement;
+     std::cout<<"now i wand to add element"<<std::endl;
+    m_array[m_size] = newElement;  //FIXME: mistake for string
+    std::cout<<"Ive added string element to list"<<std::endl;
     m_size++;
+    std::cout<<"element added and now it has size"<<m_size<<std::endl;
   }
 
   template<typename T>
