@@ -602,14 +602,24 @@ void writeTableToFile(std::ofstream &outfile, Table &obj)
       type = obj.m_table.getElement(j)->getType();
       if (strcmp(type, "int") == 0)
       {
-        int element = obj.m_table.getElement(j)->getIntElement(i);
+        Int element = obj.m_table.getElement(j)->getIntElement(i);
+        if(element.isNULL())
+        {
+          outfile<<"NULL"<<" ";
+          continue;
+        }
         outfile << element << " ";
         std::cout << "[" << i << "][" << j << "] write int value" << endl;
         continue;
       }
       if (strcmp(type, "double") == 0)
       {
-        double element = obj.m_table.getElement(j)->getDoubleElement(i);
+        Double element = obj.m_table.getElement(j)->getDoubleElement(i);
+        if(element.isNULL())
+        {
+           outfile<<"NULL"<<" ";
+           continue;
+        }
         outfile << element << " ";
         std::cout << "[" << i << "][" << j << "] write double value" << endl;
         continue;
@@ -617,7 +627,6 @@ void writeTableToFile(std::ofstream &outfile, Table &obj)
       if (strcmp(type, "string") == 0)
       {
         const char *element = obj.m_table.getElement(j)->getStringElement(i);
-
         outfile << element << " ";
         std::cout << "[" << i << "][" << j << "] write strig value" << endl;
         continue;
