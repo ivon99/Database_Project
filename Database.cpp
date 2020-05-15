@@ -107,3 +107,12 @@ Table& Database::innerJoin(const char* tablename1,int col_index,const char* tabl
       return getTable(tablename1).innerJoin(col_index,getTable(tablename2),other_col_index);
     }
 }
+
+ void saveDatabaseToFile(std::ofstream& outfile, Database& obj)
+ {
+     int size = obj.m_database.getSize();
+     for(int i=0; i<size;i++)
+     {
+       outfile<<obj.m_database[i]->getName()<<endl;
+     }
+ }

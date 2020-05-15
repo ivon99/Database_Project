@@ -1,11 +1,12 @@
+10 simple.txt
 6 Table2
 5 4
-9 FirstCol int
-10 SEcondCol double
-9 ThirdCol string
-8 LastCol int
-NULL  -2.313 "text1" 7
--123   NULL  "text2" +2131
--12    23.    "NULL"  -10
-0     -85.12   "text3"  +31313
-0  329832.32    "tex4"  5
+8 FirstCol int
+9 SEcondCol double
+8 ThirdCol string
+7 LastCol int
+NULL -2.313 "text1" 7 
+-123 NULL "text2" 2131 
+-12 23 "NULL" -10 
+0 -85.12 "text3" 31313 
+0 329832 "tex4" 5 

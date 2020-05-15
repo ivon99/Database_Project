@@ -7,11 +7,13 @@
 #include "DoubleColumn.hpp" 
 #include "String.hpp"
 #include <fstream>
+//const int MAX_FILENAME_SIZE =100;
 
 class Table
 {
     List<IColumn*> m_table;
     char* m_tablename; 
+    char* m_filename;
 
     //==helper functions==
     //void createColByType(const char* type, const char* colname);
@@ -28,7 +30,7 @@ class Table
     void describe()const;
     const char* getName() const;
     void print() const; //TODO: dialogue <iomanip>
-
+    const char* getFilename() const;
     int count(int col_index, int value) const;
     int count(int col_index, double value) const;
     int count(int col_index, const char* value) const;
