@@ -1,4 +1,4 @@
-7 Тable1
+6 Тable1
 5 3
 9 FirstCol int
 10 SecondCol double

@@ -6,31 +6,7 @@
 #include <cmath>
 using namespace std;
 
-
 //TODO: compare for double (aggregate for double)
-
-//==HELPER FUNCTIONS==
-/*
-void Table::createColByType(const char* type, const char* colename)
-{
-  if(strcmp(type,"int")==0)
-  {
-     IntColumn(colname);
-  }
-  if(strcmp(type,"double")==0)
-  {
-   DoubleColumn(colname); 
-  }
-  if(strcmp(type,"string")==0)
-  {
-    StringColumn(colname);
-  }
-  else
-  {
-   cout<<"Invalid column type!"<<endl;
-  }
-}
-*/
 
 int convertTextToNum(char* text)
 {
@@ -56,6 +32,7 @@ int convertTextToNum(char* text)
 Table::Table(const char *name)
 {
   m_tablename = new char[strlen(name) + 1];
+  strcpy(m_tablename,name);
   m_table = List<IColumn *>();
 }
 
@@ -80,11 +57,12 @@ Table &Table::operator=(const Table &other)
 
 Table::~Table()
 {
-  int num_col = m_table.getSize();
+  /*int num_col = m_table.getSize();
   for (int i = 0; i < num_col; i++)
   {
     delete m_table[i];
-  }
+  }*/
+  delete[] m_tablename;
 }
 
 //===GETTERS AND PRINTERS===
@@ -195,7 +173,6 @@ void Table::insertStringValue(String* value, int col_index)
   m_table[col_index]->addElement(value);
 }
 
-//TODO: NULL!!!
 void Table::insertRow(int col_index)
 {
   const char *type = new char[7];
@@ -210,7 +187,8 @@ void Table::insertRow(int col_index)
   }
   if (strcmp(type, "string") == 0)
   {
-    insertStringValue(nullptr, col_index);
+    String* str_ptr= new String("NULL");
+    insertStringValue(str_ptr, col_index);
   }
 }
 
@@ -444,16 +422,27 @@ void Table::aggregate(int col_index, int value, int target_col_index, const char
 
  Table& Table::innerJoin(int first_col_index, Table& other,int other_col_index )
 {
-  Table* new_table = new Table();
+  //==creates new table==
+  Table* new_table = new Table("Innerjoined");
+
+  //==adds first column
   const char * name_col1 = m_table.getElement(first_col_index)->getNameColumn();
   const char* type_col1=  m_table.getElement(first_col_index)->getType();
   new_table->addColumn(name_col1,type_col1);
-  new_table->m_table[new_table->m_table.getSize()]= m_table[first_col_index];
+  int size_col = m_table[first_col_index]->getSize();
+  for(int i=0; i<size_col; i++)
+  {
+    new_table->m_table[i] = m_table[i];
+  }
 
-  const char * name_other_col = m_table.getElement(first_col_index)->getNameColumn();
-  const char* type_other_col=  m_table.getElement(first_col_index)->getType();
+  //==adds second column
+  const char * name_other_col = other.m_table.getElement(other_col_index)->getNameColumn();
+  const char* type_other_col=  other.m_table.getElement(other_col_index)->getType();
   new_table->addColumn(name_other_col,type_other_col);
-  new_table->m_table[new_table->m_table.getSize()] = other.m_table[other_col_index];
+  for(int i=0; i<size_col; i++)
+  {
+    new_table->m_table[i] = m_table[i];
+  }
   
   return *new_table;
 }
@@ -471,9 +460,14 @@ Table &readTableFromFile(std::ifstream &infile, Table &obj)
   //==imports tablename==
   int tablename_size;
   infile >> tablename_size;
+  char space;
+  infile.get(space);
   char tablename[tablename_size];
-  infile >> tablename;
+  //infile >> tablename;
+  infile.getline(tablename,tablename_size+1);
+  cout<<tablename[0];
   obj.m_tablename = new char[tablename_size];
+  //cout<<"!!!@@Tablename size is" <<tablename_size<<"BUT "<<strlen(tablename)<<"and input is"<<tablename<<endl;
   strcpy(obj.m_tablename, tablename);
   std::cout << "Succesfully read tablename " << obj.m_tablename << endl;
 

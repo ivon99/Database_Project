@@ -7,6 +7,8 @@
 #include "StringColumn.hpp"
 #include "List.hpp"
 #include "Table.hpp"
+#include "Database.hpp"
+#include <cstring>
 using namespace std;
 
 //TODO: Make an interface base class and system to inherit it
@@ -112,8 +114,8 @@ int main()
     tablename.addColumn("[kitty-katty]","int");
     tablename.addColumn("[babes]","double");
     tablename.describe(); */
-    Table test1 = open("sample_input_update.txt");
-    //Table test2 = open("sample_input_string.txt");
+    Table test1 = open("table1.txt");
+    Table test2 = open("simple.txt");
     //test1.describe();
    //test2.describe();
     //Table innerjoined= test1.innerJoin(3,test2,0); //TODO: in
@@ -127,6 +129,27 @@ int main()
     //test1.deleteRows(0,0);
     saveas("saved_file.txt", test1);
     //saveas("save2file.txt",test2);
+    
+    Database my_database;
+    Table* test1_ptr = &test1;
+    my_database.addTable(test1_ptr);
+    Table* test2_ptr = &test2;
+    my_database.addTable(test2_ptr);
+    my_database.showtables();
+
+    /*
+    char input[10];
+    cin>>input;
+    input[strlen(input)+1]='\0';
+    cout<<strlen(input); 
+    */
+   
+    //bool is_2= my_database.isTable(input);
+    //cout<<is_2<<endl;
+    //bool is_1 = my_database.isTable("Table1");
+    //cout<<is_1<<endl;
+   Table innerjoined=  my_database.innerJoin("Table1",0,"Table2",0);
+   saveas("innerjoined.txt", innerjoined);
 
     /* ==Test for String class==
     StringColumn test2;

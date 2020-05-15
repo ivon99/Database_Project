@@ -54,10 +54,9 @@ class Table
     void deleteRows(int col_index, double value);
     void deleteRows(int col_index, String value);
 
-    void aggregate(int col_index, int value, int target_col_index, const char* operation);
+    void aggregate(int col_index, int value, int target_col_index, const char* operation); 
 
-
-    Table& innerJoin(int first_col_index, Table& other,int other_col_index );
+    Table& innerJoin(int first_col_index, Table& other,int other_col_index ); //TODO:
 
     void rename(const char* new_name);
     friend void writeTableToFile(std::ofstream& outfile, Table& obj); 
