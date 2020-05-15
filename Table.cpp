@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cstring>
 #include <fstream>
+#include <cmath>
 using namespace std;
 
 
@@ -30,6 +31,26 @@ void Table::createColByType(const char* type, const char* colename)
   }
 }
 */
+
+int convertTextToNum(char* text)
+{
+   int size= strlen(text);
+   int initial_pos=0;
+   if((text[0]=='-')||(text[0]=='+')) initial_pos=1;
+   int digit=0;
+   int out_int = 0;
+   for(int i=initial_pos;i<size; i++)
+   {
+     cout<<text[i]<<endl;
+     digit = text[i] - '0' ;
+    out_int += digit * pow(10, size-i);
+   }
+
+   if(text[0]=='-') return -out_int/10;
+
+   return out_int/10;
+ }
+
 
 // ==THE BIG 4===
 Table::Table(const char *name)
@@ -376,6 +397,13 @@ void Table::deleteRows(int col_index, String value)
 
 void Table::aggregate(int col_index, int value, int target_col_index, const char* operation)
 {
+   const char* type_search_col = m_table.getElement(col_index)->getType();
+   const char* type_target_col =m_table.getElement(target_col_index)->getType();
+   if((strcmp(type_search_col,"string")==0)||(strcmp(type_target_col,"string")==0))
+   {
+     cout<<"Aggregate columns must be of type int or double!"<<endl;
+     return ;
+   }
    int size_col = m_table.getElement(col_index)->getSize();
    for(int i=0; i<size_col;i++)
    {
@@ -482,19 +510,42 @@ Table &readTableFromFile(std::ifstream &infile, Table &obj)
 
       if (strcmp(type, "int") == 0)
       {
+        char* input= new char[100];
+        infile>>input; 
+        if(input[0]=='N')
+        {
+        cout<<"I wont read because its null!Add empty int";
+        Int empty_int();
+        obj.m_table[j]->addNullInt();
+        continue;
+        }
+        else{
+          cout<<"A value!!"<<endl;
         int value;
-        infile >> value;
+        value = convertTextToNum(input);
         std::cout << "[" << i << "][" << j << "] put int value" << value << endl;
         obj.insertIntValue(value, j);
-        continue;
+        continue; 
+        }
       }
       if (strcmp(type, "double") == 0)
       {
-        double value;
-        infile >> value;
-        std::cout << "[" << i << "][" << j << "] put double value" << value << endl;
-        obj.insertDoubleValue(value, j);
+        char* input= new char[100];
+        infile>>input; 
+        if(input[0]=='N')
+        {
+        cout<<"I wont read because its null!Add empty int";
+        Int empty_int();
+        obj.m_table[j]->addNullDouble();
         continue;
+        }
+        else{
+          cout<<"A value!!"<<endl;
+        double value = atof(input);
+        std::cout << "[" << i << "][" << j << "] put int value" << value << endl;
+        obj.insertDoubleValue(value, j);
+        continue; 
+        }
       }
       if (strcmp(type, "string") == 0)
       {
@@ -503,8 +554,6 @@ Table &readTableFromFile(std::ifstream &infile, Table &obj)
         std::cout << "[" << i << "][" << j << "] put string text " << text << endl;
         String *str_ptr = new String(text);
         std::cout << "string now is" <<*str_ptr<<endl;
-        // const char* value_in= str_ptr->convertToChar();
-        //cout<<value_in;
         cout<<"Im about to insert string for column"<<j<<endl;
         obj.insertStringValue(str_ptr, j);  //FIXME: Maybe insert string should get String&, because othrwise copy constructor
         std::cout << "im here!" << endl;
@@ -567,8 +616,8 @@ void writeTableToFile(std::ofstream &outfile, Table &obj)
       }
       if (strcmp(type, "string") == 0)
       {
-        //TODO: Make a conversion from string to const char
         const char *element = obj.m_table.getElement(j)->getStringElement(i);
+
         outfile << element << " ";
         std::cout << "[" << i << "][" << j << "] write strig value" << endl;
         continue;

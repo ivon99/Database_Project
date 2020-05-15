@@ -2,6 +2,8 @@
 #define _ICOLUMN_HPP_
 #include <iostream>
 #include "String.hpp"
+#include "Double.hpp"
+#include "Int.hpp"
 
 class IColumn 
 {
@@ -10,10 +12,12 @@ class IColumn
    virtual const char* getNameColumn() =0;
    virtual int getSize()=0;
 
-   virtual int getIntElement(int index)=0;
-   virtual double getDoubleElement(int index)=0;
+   virtual Int getIntElement(int index)=0;
+   virtual Double getDoubleElement(int index)=0;
    virtual const char* getStringElement(int index)=0;
 
+   virtual void addNullInt()=0;
+   virtual void addNullDouble()=0;
    virtual void addElement(int value)=0;
    virtual void addElement(double value)=0;
    virtual void addElement(String* value)=0;

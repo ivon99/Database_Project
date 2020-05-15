@@ -3,10 +3,14 @@
 #include "List.hpp"
 #include "IColumn.hpp"
 #include "String.hpp"
+#include "Int.hpp"
+#include "Double.hpp"
+#include <iostream>
+using namespace std;
 
 class IntColumn : public IColumn
 {
-   List<int> m_intcolumn;
+   List<Int> m_intcolumn;
    char* m_colname;
     
    void copyFrom(const IntColumn& other); 
@@ -27,6 +31,8 @@ class IntColumn : public IColumn
 
    //==methods==
 
+    virtual void addNullInt() override;
+    virtual void addNullDouble() override {;}
    virtual void addElement(int value) override;
    virtual void addElement(double value)override 
    {
@@ -38,8 +44,8 @@ class IntColumn : public IColumn
     value=nullptr;  value++;
     return;
    }
-   virtual int getIntElement(int index)override { return m_intcolumn[index]; }
-   virtual double getDoubleElement(int index)override 
+   virtual Int getIntElement(int index)override { return m_intcolumn[index]; }
+   virtual Double getDoubleElement(int index)override 
    { index++;
      return -1;
      }
@@ -60,10 +66,8 @@ class IntColumn : public IColumn
        return ;
    }
 
-
    virtual void deleteElement(int index) override;
    void printColumn(); //FIXME: only for now, later to be properly displayed
 };
-
 
 #endif 

@@ -113,20 +113,20 @@ int main()
     tablename.addColumn("[babes]","double");
     tablename.describe(); */
     Table test1 = open("sample_input_update.txt");
-    Table test2 = open("sample_input_string.txt");
+    //Table test2 = open("sample_input_string.txt");
     //test1.describe();
    //test2.describe();
     //Table innerjoined= test1.innerJoin(3,test2,0); //TODO: in
     //saveas("interjoined.txt", innerjoined);
-    test1.updateRows(0,0,3,5);
-    test1.count(0,0);
-    test1.aggregate(0, 5, 3, "sum");
-    test1.aggregate(0, 5, 3, "product");
-    test1.aggregate(0, 5, 3, "maximum");
-    test1.aggregate(0, 5, 3, "minimum");
-    test1.deleteRows(0,0);
+    //test1.updateRows(0,0,3,5);
+   // test1.count(0,0);
+    //test1.aggregate(0, 5, 3, "sum");
+    //test1.aggregate(0, 5, 3, "product");
+    //test1.aggregate(0, 5, 3, "maximum");
+    //test1.aggregate(0, 5, 2, "minimum");
+    //test1.deleteRows(0,0);
     saveas("saved_file.txt", test1);
-    saveas("save2file.txt",test2);
+    //saveas("save2file.txt",test2);
 
     /* ==Test for String class==
     StringColumn test2;

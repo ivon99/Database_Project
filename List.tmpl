@@ -106,7 +106,7 @@ template<typename T>
      }
      std::cout<<"now i wand to add element"<<std::endl;
     m_array[m_size] = newElement;  //FIXME: mistake for string
-    std::cout<<"Ive added string element to list"<<std::endl;
+    std::cout<<"Ive added element to list"<<newElement<<std::endl;
     m_size++;
     std::cout<<"element added and now it has size"<<m_size<<std::endl;
   }
@@ -137,7 +137,7 @@ template<typename T>
   }
 
   template<typename T>
-  std::ostream& operator<<(std::ostream out,const List<T>& object)
+  std::ostream& operator<<(std::ostream& out,const List<T>& object)
   {
     out<< "{ ";
      for(int i=0; i<object.getSize(); i++)

@@ -43,6 +43,13 @@ const char* IntColumn::getType(){
     return "int";
 }
 
+void IntColumn::addNullInt()
+{
+    Int* new_null_int= new Int();
+    m_intcolumn.addElement(*new_null_int);
+    cout<<"Ive added a null int"<<endl;
+}
+
 void IntColumn::addElement(int value)
 {
     m_intcolumn.addElement(value);

@@ -51,7 +51,7 @@ void StringColumn::addElement(String* value)
 {
     cout<<"Im inside add element string"<<endl;
     m_stringcolumn.addElement(value);
-    cout<<"Ive added element to string column and now it has size "<<m_stringcolumn.getSize()<<endl;
+    cout<<"!!Ive added element to string column and now it has size "<<m_stringcolumn.getSize()<<endl;
 }
 
 void StringColumn::updateElement(int index, String* value)

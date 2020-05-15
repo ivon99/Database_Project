@@ -43,6 +43,13 @@ const char* DoubleColumn::getType(){
     return "double";
 }
 
+void DoubleColumn::addNullDouble()
+{
+    Double* new_null_double= new Double();
+    m_doublecolumn.addElement(*new_null_double);
+    cout<<"Ive added a null int"<<endl;
+}
+
 void DoubleColumn::addElement(double value)
 {
     m_doublecolumn.addElement(value);

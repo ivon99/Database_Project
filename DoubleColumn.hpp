@@ -3,10 +3,12 @@
 #include "List.hpp"
 #include "IColumn.hpp"
 #include "String.hpp"
+#include "Double.hpp"
+#include "Int.hpp"
 
 class DoubleColumn : public IColumn
 {
-   List<double> m_doublecolumn;
+   List<Double> m_doublecolumn;
    char* m_colname;
 
    void copyFrom(const DoubleColumn&);
@@ -25,12 +27,12 @@ class DoubleColumn : public IColumn
    virtual const char* getType() override;
    virtual const char* getNameColumn() override;
    virtual int getSize() override {return m_doublecolumn.getSize();}
-   virtual int getIntElement(int index) override 
+   virtual Int getIntElement(int index) override 
    {
       index++;
       return -1;
    }
-   virtual double getDoubleElement(int index) override 
+   virtual Double getDoubleElement(int index) override 
    {
      return m_doublecolumn[index];
    }
@@ -44,6 +46,8 @@ class DoubleColumn : public IColumn
      value++; 
      return ;
      }
+     virtual void addNullInt() override {;}
+     virtual void addNullDouble() override;
    virtual void addElement(double value)override;
    virtual void addElement(String* value) override 
    {

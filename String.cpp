@@ -9,10 +9,15 @@ using namespace std;
  {
      if(text==nullptr)
      {
-         text= (char*)"";
+         text= (char*)"NULL";
          m_size=0;
+         m_null=true;
         return ;
      }
+    if(strcmp(text,"NULL")==0)
+        m_null=true;
+     else m_null=false; 
+
      m_size = strlen(text);
      cout<<"input text size is "<<m_size<<"and last char is "<<text[m_size-1];
      if((text[0]=='"')&&(text[m_size-1]=='"'))
@@ -39,8 +44,10 @@ void String::copyFrom(const String& other)
     {
         m_text= (char*)"";
         m_size=0;
+        m_null=true;
         return ;
     }
+    m_null=other.m_null;
     m_size=other.m_size;
     m_text= new char[m_size];
     for(int i=0; i<m_size; i++)
@@ -103,11 +110,15 @@ void String::formatToString()
 String::String(const char* text)
 {
   initFrom(text);
+  if(strcmp(text,"NULL")==0)
+    m_null=true;
+  else m_null=false; 
   cout<<"String constructor called"<<endl;
 }
 
 String::String(const char ch)
 {
+  
   initFrom(&ch);
 }
 
@@ -136,6 +147,11 @@ String& String::operator=(const String& other)
 String::~String()
 {
   delete[] m_text;
+}
+
+bool String::isNULL()const
+{
+    return m_null;
 }
 
 bool String::isChar(const char ch) const

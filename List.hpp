@@ -46,7 +46,7 @@ class List{
 };
 
 template <typename T>
-std::ostream& operator<<(std::ostream out,const List<T>& object);
+std::ostream& operator<<(std::ostream& out,const List<T>& object);
 
 #include "List.tmpl"
 

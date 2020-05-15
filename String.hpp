@@ -7,6 +7,7 @@ class String
 {
    char* m_text;
    int m_size;
+   bool m_null;
    
   //--helper functions
   void initFrom(const char* text);
@@ -16,7 +17,7 @@ class String
 
   public:
   //--The Big 4--
-  	String(const char* text = "");
+  	String(const char* text = "NULL");
 	String(const char c);
 	String(const String& other);
 	String& operator=(const String& other);
@@ -29,7 +30,7 @@ class String
 
 
    //--printing & getters --
-   
+   bool isNULL()const;
     inline int getSize()const {return m_size;}
  
    //--string manipulations

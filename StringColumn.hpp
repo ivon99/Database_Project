@@ -3,6 +3,8 @@
 #include "List.hpp"
 #include "String.hpp"
 #include "IColumn.hpp"
+#include "Int.hpp"
+#include "Double.hpp"
 
 class StringColumn : public IColumn
 {
@@ -28,12 +30,12 @@ public:
   virtual int getSize() override { return m_stringcolumn.getSize(); }
 
   //==methods==
-  virtual int getIntElement(int index) override
+  virtual Int getIntElement(int index) override
   {
     index++;
     return -1;
   }
-  virtual double getDoubleElement(int index) override
+  virtual Double getDoubleElement(int index) override
   {
     index++;
     return -1;
@@ -42,6 +44,9 @@ public:
   {
     return m_stringcolumn[index]->convertToChar();
   }
+
+  virtual void addNullInt() override {;}
+  virtual void addNullDouble() override {;}
   virtual void addElement(int value) override
   {
     value++;

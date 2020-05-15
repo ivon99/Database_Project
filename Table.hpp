@@ -16,6 +16,7 @@ class Table
     //==helper functions==
     //void createColByType(const char* type, const char* colname);
     //void addRowbyType(const char* type);
+    //int convertTextToNum(char* text);
     public:
     //--The big 4--
     Table(const char* name="Table");
@@ -67,6 +68,7 @@ class Table
     void writeTableToFile(std::ofstream& outfile, Table& obj); //TODO: 
     Table& readTableFromFile(std::ifstream& infile, Table& obj);  //TODO:
 
+int convertTextToNum(char* text);
 
 
 #endif
