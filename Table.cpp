@@ -180,7 +180,6 @@ void Table::insertIntValue(int value, int col_index)
 
 void Table::insertDoubleValue(double value, int col_index)
 {
-
   m_table[col_index]->addElement(value);
 }
 

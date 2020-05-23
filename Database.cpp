@@ -80,6 +80,22 @@ void Database::addTable(Table* new_table)
       return ;
   }
 }
+/*
+void Database::import(const char* tablename)
+{
+     if(isTable(tablename))
+  {
+      cout<<"Table with this tablename already exists in database!"<<endl;
+      return;
+  }
+  else
+  {
+      Table* new_table= &getTable(tablename);
+      m_database.addElement(new_table);
+      cout<<"Table with name"<< tablename<< "succesfully added to database!"<<endl; 
+      return ;
+  }
+} */
 
 void Database::showtables() const 
 {

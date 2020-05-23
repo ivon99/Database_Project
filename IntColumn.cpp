@@ -10,6 +10,7 @@ using namespace std;
    m_intcolumn=other.m_intcolumn;
  }
 
+//===THE BIG 4===
 IntColumn::IntColumn(const char* colname)
 {
    m_colname= new char[strlen(colname)+1];
@@ -34,6 +35,7 @@ IntColumn& IntColumn::operator=(const IntColumn& other)
     return *this;
 }
 
+//===getetrs===
 const char* IntColumn::getNameColumn()
 {
    return m_colname;
@@ -43,6 +45,7 @@ const char* IntColumn::getType(){
     return "int";
 }
 
+//===column methods===
 void IntColumn::addNullInt()
 {
     Int* new_null_int= new Int();

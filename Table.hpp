@@ -43,7 +43,6 @@ class Table
     void insertDoubleValue(double value, int col_index);
     void insertStringValue(String* value, int col_index);
 
-   
     void select(int col_index, int value);
     void select(int col_index, double value);
     void select(int col_index, const char* value); 
