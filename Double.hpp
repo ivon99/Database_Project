@@ -1,30 +1,34 @@
 #ifndef _DOUBLE_HPP_
 #define _DOUBLE_HPP_
 #include <iostream>
+#include "IValue.hpp"
 using namespace std;
 
-class Double
+class Double : public IValue
 {
     double m_double;
     bool m_null;
-    
-    public:
+
+public:
     Double();
     Double(double value);
-    bool isNULL() const;
-    double getValue() const;
+    virtual const char* getType() const override;
+    virtual int getNumofChar() const override;
+    virtual bool isNULL() const override;
+
+    //==getters
+    virtual int getIntValue() const override;
+    virtual double getDoubleValue() const override;
+    virtual const char *getCharValue() const override;
 
     //==operators redefinition
-    bool operator==(Double& other);
-    bool operator>(Double& other);
-    bool operator<(Double& other);
+    virtual bool is_equal(IValue* rhs) const override;
+    virtual bool is_bigger(IValue* rhs)const override;
+    virtual bool is_smaller(IValue* rhs)const override;
 
-    //==conversion operators
-    operator double();
-
-    friend std::ostream& operator<<(std::ostream& out,const Double& object);
+    friend std::ostream &operator<<(std::ostream &out, const IValue* object);
 };
 
-std::ostream& operator<<(std::ostream& out,const Double& object);
+std::ostream &operator<<(std::ostream &out, const IValue* object);
 
 #endif

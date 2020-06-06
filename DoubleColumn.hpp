@@ -1,74 +1,34 @@
-#ifndef _DOUBLE_COLUMN_HPP_
-#define _DOUBLE_COLUMN_HPP_
-#include "List.hpp"
-#include "IColumn.hpp"
-#include "String.hpp"
-#include "Double.hpp"
-#include "Int.hpp"
+#ifndef _DOUBLE_HPP_
+#define _DOUBLE_HPP_
+#include <iostream>
+#include "IValue.hpp"
+using namespace std;
 
-class DoubleColumn : public IColumn
+class Double : public IValue
 {
-   List<Double> m_doublecolumn;
-   char* m_colname;
+    double m_double;
+    bool m_null;
 
-   void copyFrom(const DoubleColumn&);
+public:
+    Double();
+    Double(double value);
+    virtual const char* getType() const override;
+    virtual int getNumofChar() const override;
+    virtual bool isNULL() const override;
 
-   public:
-   //==THE BIG 4===
-   DoubleColumn(const char* colname = "[no name]");
-   DoubleColumn(const DoubleColumn& other) ;
-   DoubleColumn& operator=(const DoubleColumn& other);
-   virtual ~DoubleColumn(){
-     delete[] m_colname;
-     std::cout<<"DoubleColumn destructor called"<<std::endl;
-   }
+    //==getters
+    virtual int getIntValue() const override;
+    virtual double getDoubleValue() const override;
+    virtual const char *getCharValue() const override;
 
-   //==getter==
-   virtual const char* getType() override;
-   virtual const char* getNameColumn() override;
-   virtual int getSize() override {return m_doublecolumn.getSize();}
-   virtual Int getIntElement(int index) override 
-   {
-      index++;
-      return -1;
-   }
-   virtual Double getDoubleElement(int index) override 
-   {
-     return m_doublecolumn[index];
-   }
-   virtual const char* getStringElement(int index) override 
-   {
-      index++;
-      return "NULL";
-   }
-   virtual void addElement(int value) override
-   {
-     value++; 
-     return ;
-     }
-     virtual void addNullInt() override {;}
-     virtual void addNullDouble() override;
-   virtual void addElement(double value)override;
-   virtual void addElement(String* value) override 
-   {
-       value=nullptr; value++;
-   }
+    //==operators redefinition
+    virtual bool is_equal(IValue* rhs) const override;
+    virtual bool is_bigger(IValue* rhs)const override;
+    virtual bool is_smaller(IValue* rhs)const override;
 
-   virtual void updateElement(int index,int value) override
-    {
-      index -- ; value--;
-      return ;
-    }
-   virtual void updateElement(int index,double value) override;
-   virtual void updateElement(int index,String* value) override
-   {
-       index--; value=nullptr; value++;
-       return ;
-   }
-   
-    virtual void deleteElement(int index) override;
-
-   void printColumn(); //FIXME: only for now, later to be properly displayed
+    friend std::ostream &operator<<(std::ostream &out, const IValue* object);
 };
+
+std::ostream &operator<<(std::ostream &out, const IValue* object);
 
 #endif

@@ -9,15 +9,18 @@ class Database
     List<Table*> m_database;
 
     public:
-    Table& getTable(const char* tablename) const;
+    //===getters 
+    int getSizeDatabase() const;
+    Table* getTableAtIndex(int index) const;
+
+    Table* getTable(const char* tablename) const;
     bool isTable(char* tablename) const;
     bool isTable(const char* tablename) const;
     void showtables()const;
+
     void addTable(Table* new_table);
     void import(const char* tablename);
-    Table& innerJoin(const char* tablename1,int col_index,const char* tablename2,int other_col_index);
     friend void saveDatabaseToFile(std::ofstream& outfile, Database& obj);
-    //void save(const char* tablename);
 };
 
  void saveDatabaseToFile(std::ofstream& outfile, Database& obj);

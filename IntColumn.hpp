@@ -1,10 +1,9 @@
 #ifndef _INTCOLUMN_HPP_
 #define _INTCOLUMN_HPP_
 #include "List.hpp"
+#include "IValue.hpp"
 #include "IColumn.hpp"
-#include "String.hpp"
 #include "Int.hpp"
-#include "Double.hpp"
 #include <iostream>
 using namespace std;
 
@@ -12,6 +11,7 @@ class IntColumn : public IColumn
 {
    List<Int> m_intcolumn;
    char* m_colname;
+   int m_max_row_width;
     
    void copyFrom(const IntColumn& other); 
    public:
@@ -24,50 +24,16 @@ class IntColumn : public IColumn
      std::cout<<"IntColumn destructor called"<<std::endl;
    }
 
-   //==getter==
-   virtual const char* getType() override;
-   virtual const char* getNameColumn() override;
-   virtual int getSize() override {return m_intcolumn.getSize();}
+   virtual const char* getType()const override;
+   virtual const char* getNameColumn()const override;
+   virtual int getMaxRowWidth() const override;
+   virtual int getSize()const override;
 
-   //==methods==
-
-    virtual void addNullInt() override;
-    virtual void addNullDouble() override {;}
-   virtual void addElement(int value) override;
-   virtual void addElement(double value)override 
-   {
-     value++; 
-     return ;
-     }
-   virtual void addElement(String* value) override 
-   {
-    value=nullptr;  value++;
-    return;
-   }
-   virtual Int getIntElement(int index)override { return m_intcolumn[index]; }
-   virtual Double getDoubleElement(int index)override 
-   { index++;
-     return -1;
-     }
-   virtual const char* getStringElement(int index) override 
-   { index++;
-     return "NULL";
-     }
-
-    virtual void updateElement(int index,int value) override; 
-   virtual void updateElement(int index,double value) override
-   {
-        index--; value--;
-        return ;
-   }
-   virtual void updateElement(int index,String* value) override
-   {
-       index--; value=nullptr; value++;
-       return ;
-   }
-
-   virtual void deleteElement(int index) override;
-   void printColumn(); //FIXME: only for now, later to be properly displayed
+   virtual IValue* getElement(int index)override;
+   virtual void addNullElement()override;
+   virtual void addElement(IValue* value)override;
+   virtual void updateElement(int index,IValue* value)override;
+   virtual void deleteElement(int index)override;
 };
 
 #endif 

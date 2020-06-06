@@ -3,79 +3,41 @@
 #include "List.hpp"
 #include "String.hpp"
 #include "IColumn.hpp"
-#include "Int.hpp"
-#include "Double.hpp"
+#include "IValue.hpp"
 
 class StringColumn : public IColumn
 {
-  List<String*> m_stringcolumn;
-  char *m_colname;
+    List<String*> m_stringcolumn;
+    char *m_colname;
+    int m_max_row_width;
 
-  void copyFrom(const StringColumn &);
+    void copyFrom(const StringColumn &);
 
 public:
-  //==THE BIG 4===
-  StringColumn(const char *colname = "[no name]");
-  StringColumn(const StringColumn &other);
-  StringColumn &operator=(const StringColumn &other);
-  virtual ~StringColumn()
-  {
-    delete[] m_colname;
-    std::cout << "StringColumn destructor called" << std::endl;
-  }
+    //==THE BIG 4===
+    StringColumn(const char *colname = "[no name]");
+    StringColumn(const StringColumn &other);
+    StringColumn &operator=(const StringColumn &other);
+    virtual ~StringColumn()
+    {
+        delete[] m_colname;
+        std::cout << "StringColumn destructor called" << std::endl;
+    }
 
-  //==getter==
-  virtual const char *getType() override;
-  virtual const char *getNameColumn() override;
-  virtual int getSize() override { return m_stringcolumn.getSize(); }
+    //==getter==
 
-  //==methods==
-  virtual Int getIntElement(int index) override
-  {
-    index++;
-    return -1;
-  }
-  virtual Double getDoubleElement(int index) override
-  {
-    index++;
-    return -1;
-  }
-  virtual const char *getStringElement(int index) override
-  {
-    return m_stringcolumn[index]->convertToChar();
-  }
+    virtual const char *getType() const override;
+    virtual const char *getNameColumn() const override;
+    virtual int getMaxRowWidth() const override;
+    virtual int getSize() const override;
 
-  virtual void addNullInt() override {;}
-  virtual void addNullDouble() override {;}
-  virtual void addElement(int value) override
-  {
-    value++;
-    return;
-  }
-  virtual void addElement(double value) override
-  {
-    value++;
-    return;
-  }
-  virtual void addElement(String* value) override;
+    virtual IValue *getElement(int index) override;
+    virtual void addNullElement() override;
+    virtual void addElement(IValue *value) override;
+    virtual void updateElement(int index, IValue *value) override;
+    virtual void deleteElement(int index) override;
 
-  virtual void updateElement(int index, int value) override
-  {
-    index--;
-    value--;
-    return;
-  }
-  virtual void updateElement(int index, double value) override
-  {
-    index--;
-    value--;
-    return;
-  }
-  virtual void updateElement(int index, String* value) override;
-
-  virtual void deleteElement(int index) override;
-
-  void printColumn(); //FIXME: only for now, later to be properly displayed
+    void printColumn(); //FIXME: only for now, later to be properly displayed
 };
 
 #endif

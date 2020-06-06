@@ -8,6 +8,7 @@ void StringColumn::copyFrom(const StringColumn &other)
     m_colname = new char[strlen(other.m_colname) + 1];
     strcpy(m_colname, other.m_colname);
     m_stringcolumn = other.m_stringcolumn;
+    m_max_row_width=other.m_max_row_width;
 }
 
 //==THE BIG 4==
@@ -16,6 +17,7 @@ StringColumn::StringColumn(const char *colname)
     m_colname = new char[strlen(colname) + 1];
     strcpy(m_colname, colname);
     List<String*>();
+    m_max_row_width= 0;
     cout << "StringColumn constructor called" << endl;
 }
 
@@ -37,38 +39,59 @@ StringColumn &StringColumn::operator=(const StringColumn &other)
 }
 
 // ==getters==
-const char *StringColumn::getNameColumn()
-{
-    return m_colname;
-}
-
-const char *StringColumn::getType()
+//==getters==
+const char *StringColumn::getType() const
 {
     return "string";
 }
 
-void StringColumn::addElement(String* value)
+const char *StringColumn::getNameColumn() const
 {
-    cout<<"Im inside add element string"<<endl;
-    m_stringcolumn.addElement(value);
-    cout<<"!!Ive added element to string column and now it has size "<<m_stringcolumn.getSize()<<endl;
+    return m_colname;
 }
 
-void StringColumn::updateElement(int index, String* value)
+int StringColumn::getMaxRowWidth() const 
 {
-    m_stringcolumn[index] = value;
+   return m_max_row_width;
+}
+
+int StringColumn::getSize() const
+{
+    return m_stringcolumn.getSize();
+}
+
+IValue *StringColumn::getElement(int index)
+{
+    return m_stringcolumn[index];
+}
+
+void StringColumn::addNullElement()
+{
+    String* new_null_string = new String();
+    m_stringcolumn.addElement(new_null_string);
+    cout << "Ive added a null int" << endl;
+}
+
+void StringColumn::addElement(IValue *value)
+{
+    String *new_string = new String(value->getCharValue(),0);
+    cout<<"Freaky freaky things!"<<endl;
+    m_stringcolumn.addElement(new_string);
+    int new_int_size = value->getNumofChar();
+    if (new_int_size > m_max_row_width)
+        m_max_row_width = new_int_size;
+}
+
+void StringColumn::updateElement(int index, IValue *value)
+{
+    String *new_string = new String(value->getCharValue());
+    m_stringcolumn[index] = new_string;
+    int new_int_size = value->getNumofChar();
+    if (new_int_size > m_max_row_width)
+        m_max_row_width = new_int_size;
 }
 
 void StringColumn::deleteElement(int index)
 {
     m_stringcolumn.deleteElement(index);
-}
-
-void StringColumn::printColumn()
-{
-    int size = m_stringcolumn.getSize();
-    for (int i = 0; i < size; i++)
-    {
-        cout << m_stringcolumn[i] << '\n';
-    }
 }

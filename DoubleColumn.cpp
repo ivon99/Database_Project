@@ -3,73 +3,91 @@
 #include <cstring>
 using namespace std;
 
- void DoubleColumn::copyFrom(const DoubleColumn& other)
- { 
-   m_colname=new char[strlen(other.m_colname)+1];
-   strcpy(m_colname, other.m_colname);
-   m_doublecolumn=other.m_doublecolumn;
- }
-
-DoubleColumn::DoubleColumn(const char* colname)
+void DoubleColumn::copyFrom(const DoubleColumn &other)
 {
-   m_colname= new char[strlen(colname)+1];
-   strcpy(m_colname, colname);
-   List<double>();
-   cout<<"DoubleColumn constructor called"<<endl;
+    m_colname = new char[strlen(other.m_colname) + 1];
+    strcpy(m_colname, other.m_colname);
+    m_doublecolumn = other.m_doublecolumn;
+    m_max_row_width = other.m_max_row_width;
 }
 
-DoubleColumn::DoubleColumn(const DoubleColumn& other)
+DoubleColumn::DoubleColumn(const char *colname)
 {
-   copyFrom(other);
-   cout<<"DoubleColumn copy constructor called"<<endl;
+    m_colname = new char[strlen(colname) + 1];
+    strcpy(m_colname, colname);
+    List<double>();
+    m_max_row_width=0;
+    cout << "DoubleColumn constructor called" << endl;
 }
 
-DoubleColumn& DoubleColumn::operator=(const DoubleColumn& other)
+DoubleColumn::DoubleColumn(const DoubleColumn &other)
 {
-    if(this!=&other){
+    copyFrom(other);
+    cout << "DoubleColumn copy constructor called" << endl;
+}
+
+DoubleColumn &DoubleColumn::operator=(const DoubleColumn &other)
+{
+    if (this != &other)
+    {
         delete[] m_colname;
         copyFrom(other);
     }
-    cout<<"DoubleColumn operator== called"<<endl;
+    cout << "DoubleColumn operator== called" << endl;
     return *this;
 }
-
-const char* DoubleColumn::getNameColumn()
+//==getters==
+const char *DoubleColumn::getType() const
 {
-   return m_colname;
-}
-
-const char* DoubleColumn::getType(){
     return "double";
 }
 
-void DoubleColumn::addNullDouble()
+const char *DoubleColumn::getNameColumn() const
 {
-    Double* new_null_double= new Double();
+    return m_colname;
+}
+
+int DoubleColumn::getMaxRowWidth() const 
+{
+   return m_max_row_width;
+}
+
+int DoubleColumn::getSize() const
+{
+    return m_doublecolumn.getSize();
+}
+
+IValue *DoubleColumn::getElement(int index)
+{
+    return &m_doublecolumn[index];
+}
+
+void DoubleColumn::addNullElement()
+{
+    Double *new_null_double = new Double();
     m_doublecolumn.addElement(*new_null_double);
-    cout<<"Ive added a null int"<<endl;
+    cout << "Ive added a null int" << endl;
 }
 
-void DoubleColumn::addElement(double value)
+void DoubleColumn::addElement(IValue *value)
 {
-    m_doublecolumn.addElement(value);
+    Double *new_double = new Double(value->getDoubleValue());
+    m_doublecolumn.addElement(*new_double);
+    int new_int_size = value->getNumofChar();
+    if (new_int_size > m_max_row_width)
+        m_max_row_width = new_int_size;
 }
 
-void DoubleColumn::printColumn()
+void DoubleColumn::updateElement(int index, IValue *value)
 {
-   int size= m_doublecolumn.getSize();
-   for(int i=0; i<size; i++)
-   {
-       cout<<m_doublecolumn[i]<<'\n';
-   }
+    Double *new_double = new Double(value->getDoubleValue());
+    m_doublecolumn[index] = *new_double;
+    int new_int_size = value->getNumofChar();
+    if (new_int_size > m_max_row_width)
+        m_max_row_width = new_int_size;
 }
 
-void DoubleColumn::updateElement(int index, double value)
+void DoubleColumn::deleteElement(int index)
 {
-   m_doublecolumn[index]=value;
-}
-
-void DoubleColumn::deleteElement(int index) 
-{
-  m_doublecolumn.deleteElement(index);
+    m_doublecolumn.deleteElement(index);
 }

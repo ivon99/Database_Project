@@ -14,33 +14,69 @@ Int::Int(int value)
     m_null = false;
 }
 
+const char *Int::getType() const
+{
+    return "int";
+}
+
+int Int::getNumofChar() const
+{
+    int tmp=m_int;
+    int ctr = 0;
+    if (tmp < 0)
+        ctr++;
+    while (tmp != 0)
+    {
+        tmp = tmp / 10;
+        ctr++;
+    }
+    return ctr;
+}
+
 bool Int::isNULL() const
 {
     return m_null;
 }
-
-//==operators redefinition
-bool Int::operator==(Int &other)
-{
-    return m_int == other.m_int;
-}
-bool Int::operator>(Int &other)
-{
-    return m_int > other.m_int;
-}
-bool Int::operator<(Int &other)
-{
-    return m_int < other.m_int;
-}
-
-//==conversion operators
-Int::operator int()
+//==getters
+int Int::getIntValue() const
 {
     return m_int;
 }
 
-std::ostream &operator<<(std::ostream &out, const Int &object)
+double Int::getDoubleValue() const
 {
-    out << object.m_int;
-    return out;
+    return (double)m_int;
+}
+
+const char *Int::getCharValue() const
+{
+    const char *to_char = new char;
+    const char int_char = (char)m_int;
+    to_char = &int_char;
+    return to_char;
+}
+
+//==operators redefinition
+bool Int::is_equal(IValue *rhs) const
+{
+    cout << "Im inside operator== for int" << endl;
+    //int lhs_int= lhs->getIntValue();
+    int rhs_int = rhs->getIntValue();
+    return m_int == rhs_int;
+}
+
+bool Int::is_bigger(IValue *rhs) const
+{
+    cout << "Im inside operato > for int" << endl;
+    //int lhs_int= lhs->getIntValue();
+    int rhs_int = rhs->getIntValue();
+    return m_int > rhs_int;
+}
+
+bool Int::is_smaller(IValue *rhs) const
+{
+    cout << "Im inside operato < for int" << endl;
+    //int lhs_int= lhs->getIntValue();
+    int rhs_int = rhs->getIntValue();
+    return m_int < rhs_int;
 }
