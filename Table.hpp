@@ -27,6 +27,8 @@ public:
     char *getName();
     char *getFilename() const;
     void print() const; //TODO: dialogue <iomanip>
+    void printFromTill(int row_from, int row_till, int col_from, int col_till, int table_width) const;
+    int findHowManyPagesCols(int num_col,int col_terminal, int pages_indexes[]) const;
     void setFilename(char *filename);
     bool addColumn(const char *colname, const char *type);
     void insertRow(int col_index, IValue *value);

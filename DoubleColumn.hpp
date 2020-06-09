@@ -1,34 +1,41 @@
-#ifndef _DOUBLE_HPP_
-#define _DOUBLE_HPP_
-#include <iostream>
-#include "IValue.hpp"
-using namespace std;
+#ifndef _DOUBLE_COLUMN_HPP_
+#define _DOUBLE_COLUMN_HPP_
+#include "List.hpp"
+#include "IColumn.hpp"
+#include "Double.hpp"
 
-class Double : public IValue
+class DoubleColumn : public IColumn
 {
-    double m_double;
-    bool m_null;
+   List<Double> m_doublecolumn;
+   char* m_colname;
+   int m_max_row_width;
 
-public:
-    Double();
-    Double(double value);
-    virtual const char* getType() const override;
-    virtual int getNumofChar() const override;
-    virtual bool isNULL() const override;
+   void copyFrom(const DoubleColumn&);
 
-    //==getters
-    virtual int getIntValue() const override;
-    virtual double getDoubleValue() const override;
-    virtual const char *getCharValue() const override;
+   public:
+   //==THE BIG 4===
+   DoubleColumn(const char* colname = "[no name]");
+   DoubleColumn(const DoubleColumn& other) ;
+   DoubleColumn& operator=(const DoubleColumn& other);
+   virtual ~DoubleColumn(){
+     delete[] m_colname;
+     std::cout<<"DoubleColumn destructor called"<<std::endl;
+   }
 
-    //==operators redefinition
-    virtual bool is_equal(IValue* rhs) const override;
-    virtual bool is_bigger(IValue* rhs)const override;
-    virtual bool is_smaller(IValue* rhs)const override;
+   //==getter==
+   
+   virtual const char* getType()const override;
+   virtual const char* getNameColumn()const override;
+   virtual int getMaxRowWidth() const override;
+   virtual int getSize()const override;
 
-    friend std::ostream &operator<<(std::ostream &out, const IValue* object);
+   virtual IValue* getElement(int index)override;
+   virtual void addNullElement()override;
+   virtual void addElement(IValue* value)override;
+   virtual void updateElement(int index,IValue* value)override;
+   virtual void deleteElement(int index)override;
+
+   void printColumn(); //FIXME: only for now, later to be properly displayed
 };
-
-std::ostream &operator<<(std::ostream &out, const IValue* object);
 
 #endif

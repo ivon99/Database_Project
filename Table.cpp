@@ -591,6 +591,7 @@ void Table::writeTableToFile(std::ofstream &outfile)
   }
 }
 
+/*
 void Table::print() const
 {
   int num_rows = m_table[0]->getSize();
@@ -667,5 +668,273 @@ void Table::print() const
       }
     }
     cout << endl;
+  }
+}  */
+
+void Table::printFromTill(int row_from, int row_till, int col_from, int col_till, int table_width) const
+{
+  const char *type = new char[7];
+  bool one_on_page = false;
+  if (col_from == (col_till - 1))
+    one_on_page = true;
+  if (row_from == 0)
+  {
+    for (int j = col_from; j < col_till; j++)
+    {
+      if ((j == 0) || (one_on_page))
+      {
+        int width_name_column = strlen(m_table.getElement(j)->getNameColumn());
+        int max_row_width = m_table.getElement(j)->getMaxRowWidth();
+        if (max_row_width < width_name_column)
+        {
+          max_row_width = width_name_column;
+        }
+        table_width += max_row_width + 1;
+        cout << setw(max_row_width) << m_table.getElement(j)->getNameColumn() << "|";
+      }
+      else
+      {
+        int width_name_column = strlen(m_table.getElement(j)->getNameColumn());
+        int max_row_width = m_table.getElement(j)->getMaxRowWidth();
+        if (max_row_width < width_name_column)
+        {
+          max_row_width = width_name_column;
+        }
+        table_width += max_row_width + 2;
+        cout << " " << setw(max_row_width) << m_table.getElement(j)->getNameColumn() << "|";
+      }
+    }
+    cout << endl;
+  }
+  for (int i = row_from; i < row_till; i++)
+  {
+    for (int j = col_from; j < col_till; j++)
+    {
+      type = m_table.getElement(j)->getType();
+      int width_name_column = strlen(m_table.getElement(j)->getNameColumn());
+      int max_row_width = m_table.getElement(j)->getMaxRowWidth();
+      if (max_row_width < width_name_column)
+      {
+        max_row_width = width_name_column;
+      }
+
+      IValue *row_value = m_table.getElement(j)->getElement(i);
+      if (strcmp(type, "int") == 0)
+      {
+        if (row_value->isNULL())
+        {
+          cout << setfill(' ') << setw(max_row_width) << "NULL"
+               << "| ";
+          continue;
+        }
+
+        cout << setfill(' ') << setw(max_row_width) << row_value->getIntValue() << "| ";
+        continue;
+      }
+      if (strcmp(type, "double") == 0)
+      {
+        if (row_value->isNULL())
+        {
+          cout << setfill(' ') << setw(max_row_width) << "NULL"
+               << "| ";
+          continue;
+        }
+        cout << setfill(' ') << setw(max_row_width) << fixed << setprecision(5) << row_value->getDoubleValue() << "| ";
+        continue;
+      }
+      if (strcmp(type, "string") == 0)
+      {
+        if (row_value->isNULL())
+        {
+          cout << setfill(' ') << setw(max_row_width) << "NULL"
+               << "| ";
+          continue;
+        }
+        cout << setfill(' ') << setw(max_row_width) << row_value->getCharValue() << "| ";
+        continue;
+      }
+    }
+    cout << endl;
+  }
+}
+
+int Table::findHowManyPagesCols(int num_col, int col_terminal, int pages_indexes[]) const
+{
+  int index_pages = 1;
+  int sum = 2;
+  for (int i = 0; i < num_col; i++)
+  {
+
+    //calculating pages for width paginations
+    int width_name_column = strlen(m_table.getElement(i)->getNameColumn());
+    int max_at_index = m_table.getElement(i)->getMaxRowWidth() + 1;
+    if (max_at_index < width_name_column)
+    {
+      max_at_index = width_name_column + 1;
+    }
+    sum += max_at_index;
+    if (sum >= col_terminal)
+    {
+      pages_indexes[index_pages] = i - 1;
+      index_pages++;
+      sum = max_at_index;
+      if (sum >= col_terminal)
+      {
+        pages_indexes[index_pages] = i;
+        index_pages++;
+        continue;
+      }
+      continue;
+    }
+    if (i == (num_col - 1))
+    {
+      pages_indexes[index_pages] = i;
+      index_pages++;
+    }
+  }
+
+  pages_indexes[index_pages] = num_col;
+  index_pages++;
+
+  return index_pages;
+}
+
+void Table::print() const
+{
+  int num_rows = m_table[0]->getSize();
+  int num_col = m_table.getSize();
+
+  unsigned int table_width = 0;
+
+  struct winsize w;
+  ioctl(0, TIOCGWINSZ, &w);
+  unsigned short rows_terminal = w.ws_row;
+  unsigned short col_terminal = w.ws_col;
+
+  char *pagination_command = new char[10];
+  pagination_command[0] = 'z';
+
+  for (int i = 0; i < num_col; i++)
+  {
+    int width_name_column = strlen(m_table.getElement(i)->getNameColumn());
+    int max_row_width = m_table.getElement(i)->getMaxRowWidth();
+    if (max_row_width < width_name_column)
+    {
+      max_row_width = width_name_column;
+    }
+    table_width += max_row_width + 1; 
+  }
+
+  if ((col_terminal <= table_width) || (rows_terminal <= num_rows))
+  {
+    int index_pages = 1;
+    int pages_indexes[num_col] = {
+        0,
+    };
+    if (table_width > col_terminal)
+      index_pages = findHowManyPagesCols(num_col, col_terminal, pages_indexes);
+    else
+    {
+      pages_indexes[1] = num_col;
+      index_pages = 2;
+    }
+    int printed_rows = 0;
+    int rows_initial = 0;
+    int last_page_printed_rows = 0;
+    int previous_page_index = 0;
+
+    if ((rows_terminal < num_rows))
+    {
+      printFromTill(0, rows_terminal, 0, pages_indexes[1] + 1, table_width);
+      printed_rows = rows_terminal;
+      previous_page_index++;
+      last_page_printed_rows = rows_terminal;
+    }
+    else
+    {
+      printFromTill(0, num_rows, 0, pages_indexes[1] + 1, table_width);
+      printed_rows = num_rows;
+      previous_page_index++;
+      last_page_printed_rows = num_rows;
+    }
+
+    while (strcmp(pagination_command, "exit") != 0)
+    {
+      cin >> pagination_command;
+      if (strcmp(pagination_command, "next") == 0)
+      {
+        //when we could fit a whole page and there is more rows to print
+        if (((rows_initial + rows_terminal) <= num_rows))
+        {
+          if (previous_page_index == index_pages - 2) //if last page
+          {
+            printFromTill(rows_initial, rows_initial + rows_terminal, pages_indexes[previous_page_index] + 1, pages_indexes[previous_page_index + 1], table_width);
+            rows_initial = rows_initial + rows_terminal;
+            printed_rows += rows_terminal;
+            previous_page_index = 0;
+          }
+          else
+          {
+            if (previous_page_index == 0)
+            {
+              printFromTill(rows_initial, rows_initial + rows_terminal, 0, pages_indexes[previous_page_index + 1] + 1, table_width);
+              previous_page_index++;
+              printed_rows += rows_terminal;
+            }
+            else
+            {
+              printFromTill(rows_initial, rows_initial + rows_terminal, pages_indexes[previous_page_index] + 1, pages_indexes[previous_page_index + 1] + 1, table_width);
+              previous_page_index++;
+              printed_rows += rows_terminal;
+            }
+          }
+          last_page_printed_rows = rows_terminal;
+          continue;
+        }
+        //when there is a page that doesnt fit the whole window and there is more rows to print
+        else if (((rows_initial + rows_terminal) > num_rows))
+        {
+          if (previous_page_index == index_pages - 2)
+          {
+            printFromTill(rows_initial, num_rows, pages_indexes[previous_page_index] + 1, pages_indexes[previous_page_index + 1], table_width);
+            last_page_printed_rows = num_rows - rows_initial;
+            rows_initial = num_rows;
+            previous_page_index = 0;
+            printed_rows += num_rows - rows_initial;
+          }
+          else
+          {
+            if (previous_page_index == 0)
+            {
+              printFromTill(rows_initial, num_rows, 0, pages_indexes[previous_page_index + 1] + 1, table_width);
+              last_page_printed_rows = num_rows - rows_initial;
+              previous_page_index++;
+              printed_rows += num_rows - rows_initial;
+            }
+            else
+            {
+              printFromTill(rows_initial, num_rows, pages_indexes[previous_page_index] + 1, pages_indexes[previous_page_index + 1] + 1, table_width);
+              last_page_printed_rows = num_rows - rows_initial;
+              previous_page_index++;
+              printed_rows += num_rows - rows_initial;
+            }
+          }
+        }
+        continue;
+      }
+      if (strcmp(pagination_command, "previous") == 0)
+      {
+          if (previous_page_index == 0)
+            printFromTill(printed_rows - last_page_printed_rows, last_page_printed_rows, 0, pages_indexes[previous_page_index + 1] + 1, table_width);
+          else
+            printFromTill(printed_rows - last_page_printed_rows, last_page_printed_rows, pages_indexes[previous_page_index] + 1, pages_indexes[previous_page_index + 1] + 1, table_width);
+          rows_initial =printed_rows- last_page_printed_rows;
+          printed_rows -= last_page_printed_rows;
+          last_page_printed_rows = last_page_printed_rows - (printed_rows - last_page_printed_rows);
+  
+            previous_page_index++;
+          printed_rows = printed_rows - last_page_printed_rows;
+      }
+    }
   }
 }
