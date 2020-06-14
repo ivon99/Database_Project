@@ -1,7 +1,7 @@
 #include "List.hpp"
 #include <iostream>
 #include <fstream>
-#include <algorithm> //FIXME: to make my own
+#include <algorithm> 
 
 template<typename T>
  void List<T>::copyFrom(const List<T>& other){
@@ -38,7 +38,7 @@ template<typename T>
    //--The Big 4--
   template<typename T>
   List<T>::List(int capacity): m_size(0),
-                               m_capacity(std::max(capacity, 5)) //FIXME: to make it withouth a magic number
+                               m_capacity(std::max(capacity, 5)) 
   {  
     m_array= new T[m_capacity];
   }
@@ -65,7 +65,7 @@ template<typename T>
   List<T>::~List()
   {
     clear();
-    std::cout<<"List destroyer called"<<std::endl;
+    //std::cout<<"List destroyer called"<<std::endl;
   }
 
   //--getters--
@@ -98,17 +98,12 @@ template<typename T>
   template<typename T>
   void List<T>::addElement(const T& newElement)
   {
-    std::cout<<"Im inside add element for list"<<std::endl;
      if(m_size==m_capacity)
      {
        resize(m_capacity*2);
-       std::cout<<"Im gonna resize and now list has capacity of"<<m_capacity<<std::endl;
      }
-     std::cout<<"now i wand to add element"<<std::endl;
-    m_array[m_size] = newElement;  //FIXME: mistake for string
-    //std::cout<<"Ive added element to list"<<newElement<<std::endl;
+    m_array[m_size] = newElement;  
     m_size++;
-    std::cout<<"element added and now it has size"<<m_size<<std::endl;
   }
 
   template<typename T>
@@ -119,7 +114,6 @@ template<typename T>
     {
       m_array[i] = m_array[i+1];
     }
-
   }
 
   //--operators overloading
@@ -134,42 +128,4 @@ template<typename T>
   const T& List<T>::operator[](int index)const
   {
        return m_array[index];
-  }
-
-  template<typename T>
-  std::ostream& operator<<(std::ostream& out,const List<T>& object)
-  {
-    out<< "{ ";
-     for(int i=0; i<object.getSize(); i++)
-     {
-         out<<object[i]<<" ";
-     }
-    out<<"}";
-    return out;
-  }
-
-  //--(de)serialization (file methods)--
-
-  template<typename T>
-  void List<T>::serialize(std::ofstream& outFile)
-  {
-      outFile.write((const char*) &m_size, sizeof(m_size));
-      outFile.write((const char*) &m_capacity,sizeof(m_capacity));
-      for(int i=0; i<m_size; i++)
-      {
-        m_array[i].serialize(outFile);
-      }
-  }
-
-  template<typename T>
-  void List<T>::deserialize(std::ifstream& inFile) const
-  {
-    clear();
-    inFile.read((char*) &m_size, sizeof(m_size));
-    inFile.read((char*) &m_capacity,sizeof(m_capacity));
-    m_array= new T[m_capacity];
-      for(int i=0; i<m_size; i++)
-      {
-        m_array[i]=T(inFile);
-      }
   }

@@ -15,19 +15,17 @@ Table *Database::getTableAtIndex(int index) const
 
 Table *Database::getTable(const char *tablename) const
 {
-    cout << "Im inside gettable" << endl;
     int size_database = m_database.getSize();
     for (int i = 0; i < size_database; i++)
     {
         if (isTable(tablename))
         {
-            cout << "Succesfully will return table!" << endl;
             return m_database[i];
         }
     }
     cout << "Unable to find a table with this tablename" << endl;
     tablename--;
-    return m_database[-1];
+    return nullptr;
 }
 
 bool Database::isTable(char *tablename) const
@@ -36,10 +34,8 @@ bool Database::isTable(char *tablename) const
     for (int i = 0; i < size; i++)
     {
         const char *this_name = m_database.getElement(i)->getName();
-        cout << "Comparison between" << this_name << "with strlen" << strlen(this_name) << " and" << tablename << "with stren" << strlen(tablename) << endl;
         if (strcmp(this_name, tablename) == 0)
         {
-            cout << "Found match!" << endl;
             return true;
         }
     }
@@ -52,10 +48,8 @@ bool Database::isTable(const char *tablename) const
     for (int i = 0; i < size; i++)
     {
         const char *this_name = m_database.getElement(i)->getName();
-        cout << "Comparison between" << this_name << "with strlen" << strlen(this_name) << " and" << tablename << "with stren" << strlen(tablename) << endl;
         if (strcmp(this_name, tablename) == 0)
         {
-            cout << "Found match!" << endl;
             return true;
         }
     }
@@ -75,15 +69,6 @@ void Database::addTable(Table *new_table)
         m_database.addElement(new_table);
         cout << "Successfully imported table with name " << new_table->getName() << " to current database!" << endl;
         return;
-    }
-}
-
-void Database::showtables() const
-{
-    int size = m_database.getSize();
-    for (int i = 0; i < size; i++)
-    {
-        cout << "Table #" << i << ":" << m_database.getElement(i)->getName() << endl;
     }
 }
 

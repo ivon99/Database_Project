@@ -1,7 +1,9 @@
 #include "Double.hpp"
 #include <iostream>
 #include <cmath>
+//! used to set comparison precision 
 const double EPSILON = 0.00001;
+//! used when setting how many digits after decimal point will be printed
 int const DOUBLE_PRECISION=5;
 using namespace std;
 
@@ -9,13 +11,13 @@ Double::Double()
 {
     m_double = 0.0;
     m_null = true;
-    cout << "Im inside double constructor!" << endl;
+   // cout << "Im inside double constructor!" << endl;
 }
 Double::Double(double value)
 {
     m_double = value;
     m_null = false;
-    cout << "Im inside double constructor with value" << m_double;
+    //cout << "Im inside double constructor with value" << m_double;
 }
 
 const char *Double::getType() const
@@ -27,18 +29,18 @@ int Double::getNumofChar() const
 {
     double tmp_copy=m_double;
     int ctr = 0;
-    if (tmp_copy< 0)
+    if (tmp_copy< 0)  //if a negative double
     {
-        ctr++;
-        tmp_copy *= (-1);
+        ctr++;       //count the minus sign
+        tmp_copy *= (-1);  //turn it to positive
     }
     int y = tmp_copy;
-    while (y > 0)
+    while (y > 0)  //count how many digits before decimal point
     {
         y = y / 10;
         ctr++;
-    }
-    return ctr+DOUBLE_PRECISION+1;
+    } //sum them with decimal sign and num of digits after decimal point
+    return ctr+DOUBLE_PRECISION+1; 
 }
 
 bool Double::isNULL() const
@@ -67,24 +69,18 @@ const char *Double::getCharValue() const
 //==operators redefinition
 bool Double::is_equal(IValue *rhs) const
 {
-    //double lhs_double= lhs->getDoubleValue();
-    cout << "Im inside == for double" << endl;
     double rhs_double = rhs->getDoubleValue();
     return abs(m_double - rhs_double) < EPSILON;
 }
 
 bool Double::is_bigger(IValue *rhs) const
 {
-    //double lhs_double= lhs->getDoubleValue();
-    cout << "Im inside > for double" << endl;
     double rhs_double = rhs->getDoubleValue();
     return m_double > rhs_double;
 }
 
 bool Double::is_smaller(IValue *rhs) const
 {
-    cout << "Im inside operator < for double" << endl;
-    //double lhs_double= lhs->getDoubleValue();
     double rhs_double = rhs->getDoubleValue();
     return m_double < rhs_double;
 }

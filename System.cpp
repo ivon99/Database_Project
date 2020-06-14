@@ -10,6 +10,7 @@ const int MAX_TYPENAME_LENGTH = 7;
 const int MAX_OPERATION_SIZE = 8;
 
 //===helper functions===
+/*returns type of input */
 const char *typeOfInput(char *value)
 {
     int size = strlen(value);
@@ -34,6 +35,7 @@ const char *typeOfInput(char *value)
         return "int";
 }
 
+/*converts an array of char to int*/
 int charToNum(char *input)
 {
     int number = 0;
@@ -64,30 +66,27 @@ System::~System()
 
 Table *System::getOpenedTableByName(char *tablename)
 {
-    cout << "Im inside getopened for size:";
     int size_loaded_tables = m_database->getSizeDatabase();
-    cout << size_loaded_tables << endl;
     for (int i = 0; i < size_loaded_tables; i++)
     {
         char *tablename_at_index = m_database->getTableAtIndex(i)->getName();
-        cout << "comparing " << strlen(tablename_at_index) << " with " << strlen(tablename) << endl;
         if (strcmp(tablename_at_index, tablename) == 0)
         {
-            cout << "Found table with tablename" << tablename << "we will be returning it" << endl;
             return m_database->getTableAtIndex(i);
         }
     }
+    cout << "Unable to find a table by that name!" << endl;
     return nullptr;
 }
 
-bool System::saveas(const char *filepath, Table &table)
+bool System::saveas(const char *filename, Table &table)
 {
     std::ofstream outfile;
-    outfile.open(filepath);
+    outfile.open(filename);
     if (outfile)
     {
         table.writeTableToFile(outfile);
-        cout << "Succesfully saved file." << endl;
+        cout << "Succesfully saved file " << filename << endl;
         outfile.close();
         return true;
     }
@@ -126,7 +125,7 @@ bool System::save_as_for_loaded_tables(char *filepath)
         for (int i = 0; i < size_loaded_tables; i++)
         {
             m_database->getTableAtIndex(i)->writeTableToFile(outfile);
-            cout << "Succesfully saved file." << endl;
+            cout << "Succesfully saved to file " << filepath << endl;
         }
         outfile.close();
         return true;
@@ -208,7 +207,7 @@ void System::help()
          << "--------------------------" << endl;
 }
 
-Table &open(const char *filename)
+Table &System::open(const char *filename)
 {
     Table *mytable = new Table();
     std::ifstream infile;
@@ -241,6 +240,7 @@ Table &open(const char *filename)
 }
 
 //===SYSTEM METHODS==
+
 void System::importTable(char *filename)
 {
     Table *new_table = &open(filename);
@@ -250,23 +250,19 @@ void System::importTable(char *filename)
 void System::select(int column_n, char *value_input, char *tablename)
 {
     const char *type_value = typeOfInput(value_input);
-    cout << "Type of input is" << type_value;
     IValue *value = nullptr;
     if (strcmp(type_value, "int") == 0)
     {
-        cout << "Inside int value" << endl;
         int num = charToNum(value_input);
         value = new Int(num);
     }
     if (strcmp(type_value, "double") == 0)
     {
-        cout << "Inside double value" << endl;
         double double_num = atof(value_input);
         value = new Double(double_num);
     }
     if (strcmp(type_value, "string") == 0)
     {
-        cout << "Im insde string value" << endl;
         value = new String(value_input);
     }
     Table *table_to_select = getOpenedTableByName(tablename);
@@ -316,9 +312,8 @@ void System::innerjoin(char *tablename1, int column1, char *tablename_second, in
 {
     Table *table1 = getOpenedTableByName(tablename1);
     Table *table_second = getOpenedTableByName(tablename_second);
-    cout << "Doing innerjoin for tables:" << table1->getName() << " and " << table_second->getName() << endl;
     Table *innerjoined_table = table1->innerJoin(column1, table_second, column2);
-    cout << "Tablename is" << innerjoined_table->getName();
+    cout << "Innerjoined tablename is" << innerjoined_table->getName();
     m_database->addTable(innerjoined_table);
 }
 
@@ -422,8 +417,6 @@ void System::insert(char *tablename, char *value_input)
     }
 }
 
-//
-//
 //===RUN==
 int System::run()
 {
@@ -453,12 +446,11 @@ int System::run()
             {
                 filename = m_database->getTableAtIndex(i)->getFilename();
                 saveas(filename, *m_database->getTableAtIndex(i));
-                cout << "At indez filename is " << filename << endl;
             }
             cout << "Succesfully saved loaded tables to their files." << endl;
             saveDatabase("database.info");
         }
-        /*saves all loaded tables to one file with inputted filename */
+        /*saves all loaded tables in one file with <filename>*/
         if (strcmp(command, "saveas") == 0)
         {
             cin >> filename;
@@ -473,22 +465,33 @@ int System::run()
         if (strcmp(command, "describe") == 0)
         {
             cin >> tablename;
-            Table *to_decribe = getOpenedTableByName(tablename);
-            to_decribe->describe();
+            if (getOpenedTableByName(tablename))
+            {
+                Table *to_decribe = getOpenedTableByName(tablename);
+                to_decribe->describe();
+            }
+            //Table *to_decribe = getOpenedTableByName(tablename);
+            //to_decribe->describe();
         }
         if (strcmp(command, "print") == 0)
         {
             cin >> tablename;
-            Table *to_decribe = getOpenedTableByName(tablename);
-            to_decribe->print();
+            if (getOpenedTableByName(tablename))
+            {
+                Table *to_decribe = getOpenedTableByName(tablename);
+                to_decribe->print();
+            }
         }
         if (strcmp(command, "export") == 0)
         {
             cin >> tablename;
             cin >> filename;
             const char *filename_to_export = filename;
-            Table *table_to_save = getOpenedTableByName(tablename);
-            saveas(filename_to_export, *table_to_save);
+            if (getOpenedTableByName(tablename))
+            {
+                Table *table_to_save = getOpenedTableByName(tablename);
+                saveas(filename_to_export, *table_to_save);
+            }
         }
         if (strcmp(command, "select") == 0)
         {
@@ -505,8 +508,11 @@ int System::run()
             cin >> column_name;
             char *column_type = new char[MAX_TYPENAME_LENGTH];
             cin >> column_type;
-            Table *table_to_add_column = getOpenedTableByName(tablename);
-            table_to_add_column->addColumn(column_name, column_type);
+            if (getOpenedTableByName(tablename))
+            {
+                Table *table_to_add_column = getOpenedTableByName(tablename);
+                table_to_add_column->addColumnToExistingTable(column_name, column_type);
+            }
         }
         if (strcmp(command, "update") == 0)
         {
@@ -531,6 +537,7 @@ int System::run()
         if (strcmp(command, "insert") == 0)
         {
             cin >> tablename;
+
             insert(tablename, value_input);
         }
         if (strcmp(command, "innerjoin") == 0)
@@ -542,7 +549,6 @@ int System::run()
             cin >> tablename_second;
             int column2;
             cin >> column2;
-            cout << "Input is " << tablename << " and " << tablename_second << endl;
             innerjoin(tablename, column1, tablename_second, column2);
         }
         if (strcmp(command, "rename") == 0)
@@ -551,8 +557,11 @@ int System::run()
             cin >> old_tablename;
             char *new_tablename = new char[MAX_TABLENAME_SIZE];
             cin >> new_tablename;
-            Table *table_to_rename = getOpenedTableByName(old_tablename);
-            table_to_rename->rename(new_tablename);
+            if (getOpenedTableByName(tablename))
+            {
+                Table *table_to_rename = getOpenedTableByName(old_tablename);
+                table_to_rename->rename(new_tablename);
+            }
         }
         if (strcmp(command, "count") == 0)
         {

@@ -59,24 +59,18 @@ const char *Int::getCharValue() const
 //==operators redefinition
 bool Int::is_equal(IValue *rhs) const
 {
-    cout << "Im inside operator== for int" << endl;
-    //int lhs_int= lhs->getIntValue();
     int rhs_int = rhs->getIntValue();
     return m_int == rhs_int;
 }
 
 bool Int::is_bigger(IValue *rhs) const
 {
-    cout << "Im inside operato > for int" << endl;
-    //int lhs_int= lhs->getIntValue();
     int rhs_int = rhs->getIntValue();
     return m_int > rhs_int;
 }
 
 bool Int::is_smaller(IValue *rhs) const
 {
-    cout << "Im inside operato < for int" << endl;
-    //int lhs_int= lhs->getIntValue();
     int rhs_int = rhs->getIntValue();
     return m_int < rhs_int;
 }

@@ -9,13 +9,13 @@ class StringColumn : public IColumn
 {
     List<String*> m_stringcolumn;
     char *m_colname;
-    int m_max_row_width;
+    unsigned int m_max_row_width;
 
     void copyFrom(const StringColumn &);
 
 public:
     //==THE BIG 4===
-    StringColumn(const char *colname = "[no name]");
+    StringColumn(const char *colname = "[string no name]", int rows=0);
     StringColumn(const StringColumn &other);
     StringColumn &operator=(const StringColumn &other);
     virtual ~StringColumn()
@@ -25,7 +25,7 @@ public:
     }
 
     //==getter==
-
+    
     virtual const char *getType() const override;
     virtual const char *getNameColumn() const override;
     virtual int getMaxRowWidth() const override;
@@ -36,8 +36,6 @@ public:
     virtual void addElement(IValue *value) override;
     virtual void updateElement(int index, IValue *value) override;
     virtual void deleteElement(int index) override;
-
-    void printColumn(); //FIXME: only for now, later to be properly displayed
 };
 
 #endif

@@ -11,17 +11,17 @@ class IntColumn : public IColumn
 {
    List<Int> m_intcolumn;
    char* m_colname;
-   int m_max_row_width;
+   unsigned int m_max_row_width;
     
    void copyFrom(const IntColumn& other); 
    public:
    //==THE BIG 4===
-   IntColumn(const char* colname = "[no name]");
+   IntColumn(const char* colname = "[int no name]", int rows =0);
    IntColumn(const IntColumn& other) ;
    IntColumn& operator=(const IntColumn& other);
    virtual ~IntColumn(){
      delete[] m_colname;
-     std::cout<<"IntColumn destructor called"<<std::endl;
+     //std::cout<<"IntColumn destructor called"<<std::endl;
    }
 
    virtual const char* getType()const override;

@@ -8,13 +8,13 @@ class DoubleColumn : public IColumn
 {
    List<Double> m_doublecolumn;
    char* m_colname;
-   int m_max_row_width;
+   unsigned int m_max_row_width;
 
    void copyFrom(const DoubleColumn&);
 
    public:
    //==THE BIG 4===
-   DoubleColumn(const char* colname = "[no name]");
+   DoubleColumn(const char* colname = "[double no name]",int rows=0);
    DoubleColumn(const DoubleColumn& other) ;
    DoubleColumn& operator=(const DoubleColumn& other);
    virtual ~DoubleColumn(){
@@ -35,7 +35,6 @@ class DoubleColumn : public IColumn
    virtual void updateElement(int index,IValue* value)override;
    virtual void deleteElement(int index)override;
 
-   void printColumn(); //FIXME: only for now, later to be properly displayed
 };
 
 #endif

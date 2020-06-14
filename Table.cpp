@@ -12,8 +12,7 @@ const int MAX_TABLENAME_SIZE = 1000;
 const int MAX_COLNAME_SIZE = 1000;
 const int MAX_STRING_ROW_SIZE = 100;
 const unsigned int MAX_COLUMN_NAMES_SIZE = 1000000000;
-//TODO:make interface
-//TODO: make print function
+const unsigned int MAX_INPUT_SIZE = 10000;
 
 //===helper functions input===
 int convertTextToNum(char *text)
@@ -26,7 +25,6 @@ int convertTextToNum(char *text)
   int out_int = 0;
   for (int i = initial_pos; i < size; i++)
   {
-    cout << text[i] << endl;
     digit = text[i] - '0';
     out_int += digit * pow(10, size - i);
   }
@@ -49,10 +47,8 @@ Table::Table(const char *name)
 
 Table::Table(const Table &other)
 {
-  cout << "Table copy constructor called" << endl;
   m_tablename = new char[strlen(other.m_tablename) + 1];
   strcpy(m_tablename, other.m_tablename);
-  cout << "Now tablename is" << m_tablename;
   m_filename = new char[strlen(other.m_filename) + 1];
   strcpy(m_filename, other.m_filename);
   m_table = other.m_table;
@@ -60,14 +56,12 @@ Table::Table(const Table &other)
 
 Table &Table::operator=(const Table &other)
 {
-  cout << "Table operator = called" << endl;
   if (this != &other)
   {
     delete[] m_tablename;
     delete[] m_filename;
     m_tablename = new char[strlen(other.m_tablename) + 1];
     strcpy(m_tablename, other.m_tablename);
-    cout << "Now tablename is " << m_tablename << endl;
     m_filename = new char[strlen(other.m_filename) + 1];
     strcpy(m_filename, other.m_filename);
     m_table = other.m_table;
@@ -115,21 +109,46 @@ bool Table::addColumn(const char *colname, const char *type)
   {
     IColumn *col = new StringColumn(colname);
     m_table.addElement(col);
-    std::cout << "String column to be added." << endl;
     return true;
   }
   if (strcmp(type, "int") == 0)
   {
     IColumn *col = new IntColumn(colname);
     m_table.addElement(col);
-    std::cout << "Int column to be added." << endl;
     return true;
   }
   if (strcmp(type, "double") == 0)
   {
     IColumn *col = new DoubleColumn(colname);
     m_table.addElement(col);
-    std::cout << "Double column to be added." << endl;
+    return true;
+  }
+  else
+  {
+    std::cout << "Invalid type for new column." << std::endl;
+    return false;
+  }
+}
+
+bool Table::addColumnToExistingTable(const char *colname, const char *type)
+{
+  int rows = m_table[0]->getSize();
+  if (strcmp(type, "string") == 0)
+  {
+    IColumn *col = new StringColumn(colname, rows);
+    m_table.addElement(col);
+    return true;
+  }
+  if (strcmp(type, "int") == 0)
+  {
+    IColumn *col = new IntColumn(colname, rows);
+    m_table.addElement(col);
+    return true;
+  }
+  if (strcmp(type, "double") == 0)
+  {
+    IColumn *col = new DoubleColumn(colname, rows);
+    m_table.addElement(col);
     return true;
   }
   else
@@ -149,13 +168,8 @@ int Table::count(int col_index, IValue *value) const
     if (row_value->is_equal(value))
       ctr++;
   }
-  cout << "Ctr is " << ctr << endl;
+  cout << "Number or rows is : " << ctr << endl;
   return ctr;
-}
-
-void Table::insertValue(IValue *value, int col_index)
-{
-  m_table[col_index]->addElement(value);
 }
 
 void Table::select(int col_index, IValue *value)
@@ -206,9 +220,7 @@ void Table::updateRows(int search_col_index, IValue *search_value, int target_co
 void Table::deleteRows(int col_index, IValue *value)
 {
   int num_col = m_table.getSize();
-  cout << "Num col is" << num_col << endl;
   int size_search_col = m_table.getElement(col_index)->getSize();
-  cout << "Num rows is " << size_search_col << endl;
   for (int i = size_search_col - 1; i > -1; i--)
   {
     IValue *row_value = m_table.getElement(col_index)->getElement(i);
@@ -216,8 +228,6 @@ void Table::deleteRows(int col_index, IValue *value)
     {
       for (int j = 0; j < num_col; j++)
       {
-        cout << "Im inside" << endl;
-        cout << "For element in column " << j << " and will delete element " << i << endl;
         m_table.getElement(j)->deleteElement(i);
       }
     }
@@ -357,13 +367,24 @@ void Table::rename(const char *new_name)
   stpcpy(m_tablename, new_name);
 }
 
+//== read from file helper functions
+/*inputs only characters, ignores column pipe, spaces and newlines*/
 char *inputValueFromFile(char *input, std::ifstream &infile)
 {
   char c;
   unsigned int ctr = 0;
+  bool inside_string = false;
   while (infile.get(c) && (c != '|') && (c != '\0'))
   {
-    if ((c != ' ') && (c != '\n') && (c >= '!') && (c <= '~'))
+    if (c == '\"')
+      inside_string = true;
+    if ((c == ' ') && (inside_string))
+    {
+      input[ctr] = c;
+      ctr++;
+      continue;
+    }
+    if ((c != '\n') && (c >= '!') && (c <= '~') && (c != ' '))
     {
       input[ctr] = c;
       ctr++;
@@ -373,6 +394,7 @@ char *inputValueFromFile(char *input, std::ifstream &infile)
   return input;
 }
 
+/*inputs tablename from file*/
 char *inputNameFromFile(char *input, std::ifstream &infile)
 {
   char c;
@@ -382,32 +404,26 @@ char *inputNameFromFile(char *input, std::ifstream &infile)
     if ((c >= '!') && (c <= '~'))
     {
       input[ctr] = c;
-      cout << "At " << ctr << " put " << c << endl;
       ctr++;
     }
   }
   input[ctr] = '\0';
-  cout << "Length is" << strlen(input) << endl;
   return input;
 }
 
-Table &readTableFromFile(std::ifstream &infile, Table &obj) //FIXME: when adding table to upgrade filename
+Table &readTableFromFile(std::ifstream &infile, Table &obj)
 {
-  std::cout << "Im inside importtable function" << endl;
   //==imports filename==
   char *tablename = new char[MAX_TABLENAME_SIZE];
-  //infile >> tablename;
   tablename = inputNameFromFile(tablename, infile);
   obj.m_tablename = new char[strlen(tablename) + 1];
   strcpy(obj.m_tablename, tablename);
-  cout << "Sucesfully read tablename" << obj.m_tablename << " and size " << strlen(obj.m_tablename) << endl;
 
   //==imports dimensions of table==
   int num_rows;
   infile >> num_rows;
   int num_col;
   infile >> num_col;
-  std::cout << "Dimensions of table are " << num_rows << "X" << num_col << endl;
 
   //==creates table with empty columns of the given types==
   char *type = new char[7];
@@ -416,11 +432,8 @@ Table &readTableFromFile(std::ifstream &infile, Table &obj) //FIXME: when adding
     char *colname = new char[MAX_COLNAME_SIZE];
     infile >> colname;
     infile >> type;
-    std::cout << "To add column name of type" << colname << " :" << type << endl;
     obj.addColumn(colname, type);
   }
-  std::cout << "Table will have:\n";
-  obj.describe();
   infile.get();
   infile.ignore(10000, '\n');
   infile.ignore(10000, '\n');
@@ -432,48 +445,36 @@ Table &readTableFromFile(std::ifstream &infile, Table &obj) //FIXME: when adding
     {
       const char *type = new char[7];
       type = obj.m_table[j]->getType();
-      //std::cout << "type is " << type << endl;
       if (strcmp(type, "int") == 0)
       {
-        char *initial_input = new char[10000];
-        //infile >> initial_input;
+        char *initial_input = new char[MAX_INPUT_SIZE];
         char *input = inputValueFromFile(initial_input, infile);
-        cout << "input is ~" << input << endl;
-        if (input[0] == 'N')
+        if (input[0] == 'N') //if NULL, add null int
         {
-          cout << "I wont read because its null!Add empty int";
           obj.m_table[j]->addNullElement();
           continue;
         }
         else
         {
-          cout << "A value!!" << endl;
           int value;
           value = convertTextToNum(input);
           IValue *int_value = new Int(value);
           obj.m_table[j]->addElement(int_value);
-
           continue;
         }
       }
       if (strcmp(type, "double") == 0)
       {
-        //char *input = new char[100];
-        //infile >> input;
-        char *initial_input = new char[10000];
-        //infile >> initial_input;
+        char *initial_input = new char[MAX_INPUT_SIZE];
         char *input = inputValueFromFile(initial_input, infile);
-        cout << "input is ~" << input << endl;
-        if (input[0] == 'N')
+        if (input[0] == 'N') //if null, add null double
         {
-          cout << "I wont read because its null!Add empty int";
           obj.m_table[j]->addNullElement();
           continue;
         }
         else
         {
-          cout << "A value!!" << endl;
-          double value = atof(input);
+          double value = atof(input); //convert char array input to double
           IValue *double_value = new Double(value);
           obj.m_table[j]->addElement(double_value);
           continue;
@@ -481,18 +482,10 @@ Table &readTableFromFile(std::ifstream &infile, Table &obj) //FIXME: when adding
       }
       if (strcmp(type, "string") == 0)
       {
-        //char *text = new char[MAX_STRING_ROW_SIZE];
-        //infile >> text;
-        char *initial_input = new char[10000];
-        //infile >> initial_input;
+        char *initial_input = new char[MAX_INPUT_SIZE];
         char *input = inputValueFromFile(initial_input, infile);
-        cout << "input is ~" << input << endl;
-        //std::cout << "[" << i << "][" << j << "] put string text " << text << endl;
         IValue *str_ptr = new String(input);
-        cout << "Im about to insert string for column" << j << endl;
         obj.m_table[j]->addElement(str_ptr);
-        //FIXME: Maybe insert string should get String&, because othrwise copy constructor
-        std::cout << "im here!" << endl;
         continue;
       }
     }
@@ -502,8 +495,6 @@ Table &readTableFromFile(std::ifstream &infile, Table &obj) //FIXME: when adding
 
 void Table::writeTableToFile(std::ofstream &outfile)
 {
-  std::cout << "Im inside writeTabletoFile function" << endl;
-
   //==writes tablename==
   outfile << m_tablename << endl;
 
@@ -523,9 +514,7 @@ void Table::writeTableToFile(std::ofstream &outfile)
   }
 
   //====
-  outfile << m_table.getElement(0)->getNameColumn() << "|";
-  table_width += strlen(m_table.getElement(0)->getNameColumn()) + 1;
-  for (int j = 1; j < num_col; j++)
+  for (int j = 0; j < num_col; j++)
   {
     int width_name_column = strlen(m_table.getElement(j)->getNameColumn());
     int max_row_width = m_table.getElement(j)->getMaxRowWidth();
@@ -534,10 +523,15 @@ void Table::writeTableToFile(std::ofstream &outfile)
       max_row_width = width_name_column;
     }
     table_width += max_row_width + 2;
+    if (j == 0)
+    {
+      outfile << setw(max_row_width) << m_table.getElement(j)->getNameColumn() << "|";
+      continue;
+    }
     outfile << " " << setw(max_row_width) << m_table.getElement(j)->getNameColumn() << "|";
   }
   outfile << endl;
-  outfile << setfill('-') << setw(table_width) << "|" << endl;
+  outfile << setfill('-') << setw(table_width - 1) << "|" << endl;
 
   for (int i = 0; i < num_rows; i++)
   {
@@ -591,21 +585,14 @@ void Table::writeTableToFile(std::ofstream &outfile)
   }
 }
 
-/*
-void Table::print() const
+void Table::printWithNoPagination() const
 {
   int num_rows = m_table[0]->getSize();
   int num_col = m_table.getSize();
   const char *type = new char[7];
   int table_width = 0;
-  struct winsize w;
-  ioctl(0, TIOCGWINSZ, &w);
-  //unsigned short rows_terminal = w.ws_row; //TODO: to implement
-  //unsigned short col_terminal = w.ws_col;
 
-  cout << m_table.getElement(0)->getNameColumn() << "|";
-  table_width += strlen(m_table.getElement(0)->getNameColumn()) + 1;
-  for (int j = 1; j < num_col; j++)
+  for (int j = 0; j < num_col; j++)
   {
     int width_name_column = strlen(m_table.getElement(j)->getNameColumn());
     int max_row_width = m_table.getElement(j)->getMaxRowWidth();
@@ -614,10 +601,15 @@ void Table::print() const
       max_row_width = width_name_column;
     }
     table_width += max_row_width + 2;
+    if (j == 0)
+    {
+      cout << setw(max_row_width) << m_table.getElement(j)->getNameColumn() << "|";
+      continue;
+    }
     cout << " " << setw(max_row_width) << m_table.getElement(j)->getNameColumn() << "|";
   }
   cout << endl;
-  cout << setfill('-') << setw(table_width) << "|" << endl;
+  cout << setfill('-') << setw(table_width - 1) << "|" << endl;
 
   for (int i = 0; i < num_rows; i++)
   {
@@ -669,7 +661,7 @@ void Table::print() const
     }
     cout << endl;
   }
-}  */
+}
 
 void Table::printFromTill(int row_from, int row_till, int col_from, int col_till, int table_width) const
 {
@@ -793,7 +785,7 @@ int Table::findHowManyPagesCols(int num_col, int col_terminal, int pages_indexes
     }
   }
 
-  pages_indexes[index_pages] = num_col;
+  pages_indexes[index_pages] = num_col - 1;
   index_pages++;
 
   return index_pages;
@@ -806,6 +798,7 @@ void Table::print() const
 
   unsigned int table_width = 0;
 
+  //===findinf the dimensions of dialogue window===
   struct winsize w;
   ioctl(0, TIOCGWINSZ, &w);
   unsigned short rows_terminal = w.ws_row;
@@ -814,6 +807,7 @@ void Table::print() const
   char *pagination_command = new char[10];
   pagination_command[0] = 'z';
 
+  //==calculating total table width===
   for (int i = 0; i < num_col; i++)
   {
     int width_name_column = strlen(m_table.getElement(i)->getNameColumn());
@@ -822,119 +816,161 @@ void Table::print() const
     {
       max_row_width = width_name_column;
     }
-    table_width += max_row_width + 1; 
+    table_width += max_row_width + 1;
   }
 
+  //===if table doesnt fit in window===
   if ((col_terminal <= table_width) || (rows_terminal <= num_rows))
   {
     int index_pages = 1;
+    //holds the indexes of columns for width pagination
     int pages_indexes[num_col] = {
-        0,
+        -1,
     };
     if (table_width > col_terminal)
       index_pages = findHowManyPagesCols(num_col, col_terminal, pages_indexes);
     else
     {
-      pages_indexes[1] = num_col;
-      index_pages = 2;
+      pages_indexes[1] = num_col - 1; //if no need for horizontal pagination
+      index_pages = 2;                //thre is only one page (two indexes: begining and end)
     }
-    int printed_rows = 0;
-    int rows_initial = 0;
-    int last_page_printed_rows = 0;
-    int previous_page_index = 0;
 
-    if ((rows_terminal < num_rows))
+    int printed_rows = 0; //holds how many rows of table have been printed so far
+    int rows_left_to_print = 0;
+    int rows_initial = 0;           //holds index of row from which to start printing next page
+    int last_page_printed_rows = 0; // holds how many printed rows last printed page had
+    int previous_page_index = 0;    // holds column index of the previous page
+    bool printed_all_width = false;
+
+    if (num_rows > rows_terminal) //if rows dont fit in window
     {
-      printFromTill(0, rows_terminal, 0, pages_indexes[1] + 1, table_width);
+      printFromTill(0, rows_terminal, 0, pages_indexes[1] + 1, table_width); //print all row till end of window and forst page
+      if (pages_indexes[1] == (num_col - 1))
+      {
+        printed_all_width = true;
+        previous_page_index = 0;
+      }
+      else
+      {
+        previous_page_index++;
+      }
       printed_rows = rows_terminal;
-      previous_page_index++;
+      rows_initial = rows_terminal;
       last_page_printed_rows = rows_terminal;
     }
-    else
+    else if (num_rows < rows_terminal) //if rows fit in window
     {
-      printFromTill(0, num_rows, 0, pages_indexes[1] + 1, table_width);
+      printFromTill(0, num_rows, 0, pages_indexes[1] + 1, table_width); // print all rows
+      if (pages_indexes[1] == (num_col - 1))
+      {
+        printed_all_width = true;
+        previous_page_index = 0;
+      }
+      else
+      {
+        previous_page_index++;
+      }
       printed_rows = num_rows;
-      previous_page_index++;
+      rows_initial = num_rows;
       last_page_printed_rows = num_rows;
     }
+    rows_left_to_print = num_rows - printed_rows;
+    //==implementing commands for pages==
 
     while (strcmp(pagination_command, "exit") != 0)
     {
       cin >> pagination_command;
       if (strcmp(pagination_command, "next") == 0)
       {
-        //when we could fit a whole page and there is more rows to print
-        if (((rows_initial + rows_terminal) <= num_rows))
+        //when we couldnt fit a whole page and there is more rows to print
+        if (rows_left_to_print >= rows_terminal)
         {
-          if (previous_page_index == index_pages - 2) //if last page
+          if ((printed_all_width) && (rows_left_to_print > 0))
           {
-            printFromTill(rows_initial, rows_initial + rows_terminal, pages_indexes[previous_page_index] + 1, pages_indexes[previous_page_index + 1], table_width);
-            rows_initial = rows_initial + rows_terminal;
+            printFromTill(rows_initial, rows_initial + rows_terminal, pages_indexes[previous_page_index] + 1, pages_indexes[previous_page_index + 1] + 1, table_width);
+            last_page_printed_rows = rows_terminal;
             printed_rows += rows_terminal;
+            rows_initial = rows_initial + rows_terminal;
+          }
+          else if (!printed_all_width)
+          {
+            int new_index = rows_initial - last_page_printed_rows;
+            printFromTill(new_index, new_index + (last_page_printed_rows ), pages_indexes[previous_page_index] + 1, pages_indexes[previous_page_index + 1] + 1, table_width);
+            last_page_printed_rows = last_page_printed_rows;
+            printed_rows = new_index + (last_page_printed_rows);
+            rows_initial = new_index + (last_page_printed_rows);
+          }
+
+          if (pages_indexes[previous_page_index + 1] == (num_col - 1))
+          {
             previous_page_index = 0;
+            printed_all_width = true;
           }
           else
           {
-            if (previous_page_index == 0)
-            {
-              printFromTill(rows_initial, rows_initial + rows_terminal, 0, pages_indexes[previous_page_index + 1] + 1, table_width);
-              previous_page_index++;
-              printed_rows += rows_terminal;
-            }
-            else
-            {
-              printFromTill(rows_initial, rows_initial + rows_terminal, pages_indexes[previous_page_index] + 1, pages_indexes[previous_page_index + 1] + 1, table_width);
-              previous_page_index++;
-              printed_rows += rows_terminal;
-            }
+            printed_all_width = false;
+            previous_page_index++;
           }
-          last_page_printed_rows = rows_terminal;
-          continue;
+          rows_left_to_print = num_rows - printed_rows;
         }
-        //when there is a page that doesnt fit the whole window and there is more rows to print
-        else if (((rows_initial + rows_terminal) > num_rows))
+        //when we could print all the other rows
+        else if (rows_left_to_print < rows_terminal)
         {
-          if (previous_page_index == index_pages - 2)
+          if ((printed_all_width) && (rows_left_to_print > 0))
           {
-            printFromTill(rows_initial, num_rows, pages_indexes[previous_page_index] + 1, pages_indexes[previous_page_index + 1], table_width);
-            last_page_printed_rows = num_rows - rows_initial;
-            rows_initial = num_rows;
-            previous_page_index = 0;
-            printed_rows += num_rows - rows_initial;
-          }
-          else
-          {
-            if (previous_page_index == 0)
+            printFromTill(rows_initial, rows_initial + rows_left_to_print, pages_indexes[previous_page_index] + 1, pages_indexes[previous_page_index + 1] + 1, table_width);
+            last_page_printed_rows = rows_left_to_print;
+            printed_rows += rows_left_to_print;
+            rows_initial = rows_initial + rows_left_to_print;
+            if (pages_indexes[previous_page_index] == (num_col - 1))
             {
-              printFromTill(rows_initial, num_rows, 0, pages_indexes[previous_page_index + 1] + 1, table_width);
-              last_page_printed_rows = num_rows - rows_initial;
-              previous_page_index++;
-              printed_rows += num_rows - rows_initial;
+              previous_page_index = 0;
+              printed_all_width = true;
             }
             else
             {
-              printFromTill(rows_initial, num_rows, pages_indexes[previous_page_index] + 1, pages_indexes[previous_page_index + 1] + 1, table_width);
-              last_page_printed_rows = num_rows - rows_initial;
               previous_page_index++;
-              printed_rows += num_rows - rows_initial;
+              printed_all_width = false;
             }
           }
+          else if (!printed_all_width)
+          {
+            int new_index = rows_initial - last_page_printed_rows;
+            printFromTill(new_index, new_index + (last_page_printed_rows ), pages_indexes[previous_page_index] + 1, pages_indexes[previous_page_index + 1] + 1, table_width);
+            last_page_printed_rows  = last_page_printed_rows;
+            printed_rows = new_index + (last_page_printed_rows);
+            rows_initial = new_index + (last_page_printed_rows);
+            if (pages_indexes[previous_page_index + 1] == (num_col - 1))
+            {
+              previous_page_index = 0;
+              printed_all_width = true;
+            }
+            else
+            {
+              previous_page_index++;
+              printed_all_width = false;
+            }
+          }
+          rows_left_to_print = num_rows - printed_rows;
         }
-        continue;
       }
       if (strcmp(pagination_command, "previous") == 0)
       {
-          if (previous_page_index == 0)
-            printFromTill(printed_rows - last_page_printed_rows, last_page_printed_rows, 0, pages_indexes[previous_page_index + 1] + 1, table_width);
-          else
-            printFromTill(printed_rows - last_page_printed_rows, last_page_printed_rows, pages_indexes[previous_page_index] + 1, pages_indexes[previous_page_index + 1] + 1, table_width);
-          rows_initial =printed_rows- last_page_printed_rows;
-          printed_rows -= last_page_printed_rows;
-          last_page_printed_rows = last_page_printed_rows - (printed_rows - last_page_printed_rows);
-  
-            previous_page_index++;
-          printed_rows = printed_rows - last_page_printed_rows;
+        if(pages_indexes[previous_page_index]==-1)
+        {
+          printFromTill( printed_rows-last_page_printed_rows,last_page_printed_rows, 0, pages_indexes[1] + 1, table_width);
+        }
+        else
+        printFromTill( printed_rows-last_page_printed_rows,last_page_printed_rows, pages_indexes[previous_page_index-1] + 1, pages_indexes[previous_page_index] + 1, table_width);
+        rows_initial = last_page_printed_rows;
+        printed_rows = last_page_printed_rows;
+        last_page_printed_rows = last_page_printed_rows - (printed_rows - last_page_printed_rows);
+        printed_rows = printed_rows - last_page_printed_rows;
       }
     }
+  }
+  else
+  { //if table fits in window, print without paginating it
+    printWithNoPagination();
   }
 }

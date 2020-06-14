@@ -11,19 +11,27 @@ void DoubleColumn::copyFrom(const DoubleColumn &other)
     m_max_row_width = other.m_max_row_width;
 }
 
-DoubleColumn::DoubleColumn(const char *colname)
+DoubleColumn::DoubleColumn(const char *colname, int rows)
 {
     m_colname = new char[strlen(colname) + 1];
     strcpy(m_colname, colname);
-    List<double>();
-    m_max_row_width=0;
-    cout << "DoubleColumn constructor called" << endl;
+    m_doublecolumn = List<Double>();
+    if (rows != 0)
+    {
+        for (int i = 0; i < rows; i++)
+        {
+            Double *new_double = new Double();
+            m_doublecolumn.addElement(*new_double);
+        }
+    }
+    m_max_row_width = 0;
+    //cout << "DoubleColumn constructor called" << endl;
 }
 
 DoubleColumn::DoubleColumn(const DoubleColumn &other)
 {
     copyFrom(other);
-    cout << "DoubleColumn copy constructor called" << endl;
+    //cout << "DoubleColumn copy constructor called" << endl;
 }
 
 DoubleColumn &DoubleColumn::operator=(const DoubleColumn &other)
@@ -33,7 +41,7 @@ DoubleColumn &DoubleColumn::operator=(const DoubleColumn &other)
         delete[] m_colname;
         copyFrom(other);
     }
-    cout << "DoubleColumn operator== called" << endl;
+    //cout << "DoubleColumn operator== called" << endl;
     return *this;
 }
 //==getters==
@@ -47,9 +55,9 @@ const char *DoubleColumn::getNameColumn() const
     return m_colname;
 }
 
-int DoubleColumn::getMaxRowWidth() const 
+int DoubleColumn::getMaxRowWidth() const
 {
-   return m_max_row_width;
+    return m_max_row_width;
 }
 
 int DoubleColumn::getSize() const
@@ -65,15 +73,18 @@ IValue *DoubleColumn::getElement(int index)
 void DoubleColumn::addNullElement()
 {
     Double *new_null_double = new Double();
+    if (strlen("NULL") > m_max_row_width)
+    {
+        m_max_row_width = strlen("NULL");
+    }
     m_doublecolumn.addElement(*new_null_double);
-    cout << "Ive added a null int" << endl;
 }
 
 void DoubleColumn::addElement(IValue *value)
 {
     Double *new_double = new Double(value->getDoubleValue());
     m_doublecolumn.addElement(*new_double);
-    int new_int_size = value->getNumofChar();
+    unsigned int new_int_size = value->getNumofChar();
     if (new_int_size > m_max_row_width)
         m_max_row_width = new_int_size;
 }
@@ -82,7 +93,7 @@ void DoubleColumn::updateElement(int index, IValue *value)
 {
     Double *new_double = new Double(value->getDoubleValue());
     m_doublecolumn[index] = *new_double;
-    int new_int_size = value->getNumofChar();
+    unsigned int new_int_size = value->getNumofChar();
     if (new_int_size > m_max_row_width)
         m_max_row_width = new_int_size;
 }

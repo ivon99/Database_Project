@@ -4,9 +4,7 @@
 using namespace std;
 const int MAX_COMMAND_SIZE = 100;
 
-//TODO: Make an interface base class and system to inherit it
-//TODO: Make a singleton system
-
+// prints information about supported functionalities
 void help()
 {
     cout << "The following commands are supported:\n"
@@ -61,6 +59,7 @@ void help()
          << "-----\n"
          << "aggregate <table name> <search column> <search value> <target column> <operaton>:\n"
          << "performs <operation> in <target column> on all rows which columns have <search calue>\n"
+         << "supported operations are: sum, product, maximum, minimum"
          << "-----\n"
          << "help:\n"
          << "prints methods information\n"
@@ -96,6 +95,7 @@ int main()
         }
     }
     cout<<"Thank you for using Database! See you again."<<endl;
+    delete[] command;
 
     return 0;
 }
