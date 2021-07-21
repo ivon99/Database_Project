@@ -29,4 +29,6 @@ The following commands are supported:\
         = **rename**: renames table\
         = **count** : counts all rows whose column has search value\
         = **aggregate**: performs  operation in target column on all rows which columns have search value; supported operations are: sum, product, maximum, minimum"\
-        = **help**: prints methods information
+        = **help**: prints methods information\
+  
+  *View full documentation for the project in file "documentation_projectDatabase.pdf"*
